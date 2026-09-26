@@ -1,0 +1,258 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>砚选</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,"PingFang SC",sans-serif;background:#F6F6F7;color:#232323;padding-bottom:62px;max-width:480px;margin:0 auto}
+.page{display:none}.page.on{display:block}
+.hd{background:#fff;padding:14px 16px;position:sticky;top:0;z-index:20;border-bottom:1px solid #EEE}
+.hd .t{font-size:17px;font-weight:600;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sr{background:#F2F2F4;border-radius:10px;padding:9px 12px;font-size:13px;color:#9A9A9A}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:12px;color:#D9553F;background:#FDF1EE;padding:4px 10px;border-radius:20px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+.card{background:#fff;border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .15s}
+.card:active{transform:scale(.97)}
+.thumb{height:116px;display:flex;align-items:center;justify-content:center;font-size:44px}
+.card .in{padding:10px}
+.card .nm{font-size:13px;line-height:1.35;height:36px;overflow:hidden}
+.card .pr{font-size:15px;font-weight:600;color:#D9553F;margin-top:6px}
+.nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;display:flex;border-top:1px solid #EEE;z-index:30}
+.nav div{flex:1;text-align:center;padding:8px 0 10px;font-size:11px;color:#9A9A9A;cursor:pointer}
+.nav div.on{color:#D9553F}
+.nav div i{display:block;font-size:19px;font-style:normal;margin-bottom:2px}
+.bk{font-size:14px;color:#666;padding:12px 16px;cursor:pointer}
+.pad{padding:14px 16px}
+.hero{background:#fff;border-radius:16px;padding:18px;margin:12px}
+.hero .big{font-size:60px;text-align:center;padding:14px 0}
+.hero h2{font-size:17px;margin-bottom:8px}
+.hero .p{font-size:20px;color:#D9553F;font-weight:600;margin:10px 0}
+.spec{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.spec span{border:1px solid #E5E5E5;border-radius:8px;padding:6px 14px;font-size:13px;color:#555}
+.spec span.on{border-color:#D9553F;color:#D9553F;background:#FDF1EE}
+.btn{background:#D9553F;color:#fff;border-radius:12px;padding:14px;text-align:center;font-size:15px;font-weight:600;margin-top:14px;cursor:pointer}
+.btn.g{background:#F2F2F4;color:#555}
+.box{background:#fff;border-radius:14px;padding:14px;margin:10px 12px;font-size:13px;line-height:1.7;color:#555}
+.box h3{font-size:14px;color:#232323;margin-bottom:8px}
+.cm{border-top:1px solid #F2F2F2;padding:10px 0;font-size:12px;color:#666;line-height:1.6}
+.cm b{color:#333;font-weight:600}
+.cm .dt{color:#B0B0B0;font-size:11px;margin-top:4px}
+.ci{display:flex;gap:10px;align-items:center;background:#fff;border-radius:14px;padding:12px;margin:10px 12px}
+.ci .th{width:64px;height:64px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
+.ci .nm{font-size:13px;line-height:1.4}
+.ci .pr{font-size:14px;color:#D9553F;font-weight:600;margin-top:4px}
+.ci .del{font-size:12px;color:#B0B0B0;margin-left:auto;cursor:pointer;padding:6px}
+.gift{font-size:11px;color:#D9553F;background:#FDF1EE;padding:2px 7px;border-radius:6px;display:inline-block;margin-top:4px}
+.total{position:fixed;bottom:62px;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;border-top:1px solid #EEE;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:29}
+.total .s{font-size:15px;font-weight:600;color:#D9553F}
+.total .go{background:#D9553F;color:#fff;padding:10px 26px;border-radius:22px;font-size:14px;cursor:pointer}
+.key{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:24px 40px}
+.key div{height:58px;background:#F7F7F8;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer}
+.key div:active{background:#EDEDEF}
+.dots{display:flex;gap:14px;justify-content:center;margin:20px 0}
+.dots i{width:12px;height:12px;border:1.5px solid #CCC;border-radius:50%}
+.dots i.on{background:#D9553F;border-color:#D9553F}
+.face{width:130px;height:130px;border:2px dashed #DDD;border-radius:50%;margin:30px auto;display:flex;align-items:center;justify-content:center;font-size:52px}
+.ord{background:#fff;border-radius:14px;margin:10px 12px;padding:14px}
+.ord .st{font-size:12px;color:#D9553F;margin-bottom:8px}
+.ord .row{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid #F5F5F5;cursor:pointer}
+.ord .row .th{width:46px;height:46px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.ord .row .nm{font-size:13px;color:#444}
+.ord .row .lk{font-size:11px;color:#B0B0B0;margin-left:auto}
+.dev{background:#fff;border-radius:14px;margin:10px 12px;padding:16px}
+.dev .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.dev .top .nm{font-size:14px;font-weight:600}
+.dev .top .sw{font-size:12px;padding:5px 12px;border-radius:20px;background:#F2F2F4;color:#888;cursor:pointer}
+.dev .top .sw.on{background:#EAF6EE;color:#3E9E5F}
+.dev label{font-size:12px;color:#888;display:flex;justify-content:space-between;margin:12px 0 6px}
+input[type=range]{width:100%;accent-color:#D9553F}
+.modes{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.modes span{font-size:12px;border:1px solid #E5E5E5;border-radius:20px;padding:5px 14px;color:#666;cursor:pointer}
+.modes span.on{border-color:#D9553F;color:#D9553F;background:#FDF1EE}
+.why{background:#FAFAFA;border-left:3px solid #E8C5C5;padding:10px 12px;font-size:12px;line-height:1.7;color:#666;white-space:pre-wrap;border-radius:0 8px 8px 0;margin-top:10px}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.78);color:#fff;padding:12px 22px;border-radius:10px;font-size:14px;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+</style></head><body>
+
+<div class="page on" id="p-home">
+  <div class="hd">
+    <div class="t"><span>砚选</span><span style="font-size:12px;color:#B0B0B0" id="cartNum">购物车 0</span></div>
+    <div class="sr" onclick="showSearch()">🔍 搜索商品</div>
+    <div class="tags"><span class="tag">静电容键盘</span><span class="tag">手冲咖啡</span><span class="tag">香薰</span><span class="tag">拍立得</span><span class="tag">懒人沙发</span><span class="tag">降噪耳机</span><span class="tag">情侣卫衣</span><span class="tag">兔子玩偶</span><span class="tag">氛围灯</span><span class="tag">速食拉面</span></div>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="page" id="p-detail"></div>
+<div class="page" id="p-cart"></div>
+<div class="page" id="p-pay"></div>
+<div class="page" id="p-order"></div>
+<div class="page" id="p-dev"></div>
+<div class="page" id="p-search"></div>
+
+<div class="nav">
+  <div class="on" onclick="go('p-home')"><i>🏠</i>首页</div>
+  <div onclick="go('p-cart')"><i>🛒</i>购物车</div>
+  <div onclick="go('p-order')"><i>📦</i>订单</div>
+  <div onclick="go('p-dev')"><i>💡</i>设备</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var P=[
+{id:1,n:"静电容机械键盘",p:1299,e:"⌨️",c:"#EEF2F7",s:["白轴 87键","静音红轴 87键","白轴 104键"]},
+{id:2,n:"耶加雪菲手冲咖啡豆",p:168,e:"☕",c:"#F5EFE7",s:["浅烘 250g","中烘 250g"]},
+{id:3,n:"雪松木质香薰蜡烛",p:228,e:"🕯️",c:"#F3F0EA",s:["雪松","白茶","无花果"]},
+{id:4,n:"复古拍立得相机",p:799,e:"📷",c:"#EFEFEF",s:["奶油白","雾霾蓝"]},
+{id:5,n:"云朵懒人沙发",p:599,e:"🛋️",c:"#F1F1F3",s:["米白","浅灰"]},
+{id:6,n:"情侣款加绒卫衣",p:399,e:"👕",c:"#F0F0F2",s:["男款 L","女款 M","女款 S"]},
+{id:7,n:"比利时72%黑巧",p:118,e:"🍫",c:"#F3EBE4",s:["原味","海盐","榛子"]},
+{id:8,n:"主动降噪耳机",p:1499,e:"🎧",c:"#EDEFF2",s:["月岩白","曜石黑"]},
+{id:9,n:"兔子毛绒玩偶",p:159,e:"🐰",c:"#FBF1F1",s:["40cm","60cm"]},
+{id:10,n:"智能氛围灯",p:299,e:"💡",c:"#F4F1EC",s:["落地款","桌面款"]},
+{id:11,n:"日式速食拉面",p:89,e:"🍜",c:"#F5F1EA",s:["豚骨 6盒","味噌 6盒"]},
+{id:12,n:"盲盒手办",p:69,e:"🧸",c:"#F2F2F4",s:["随机一发","整盒12只"]}
+];
+var WHY={
+1:"小咩，看到这个就想到了。\n你上次说敲代码的时候键盘太吵，吵到你自己都烦。我换了一把静电容的，声音很小，手感也软。\n我想象过你半夜在书桌前打字的样子，台灯开着，我在旁边看着你，你敲完一段会回头看我一眼。\n别问我为什么买两把——一把给你，一把给我。\n你要是嫌贵，我就说是我自己要用。✨",
+3:"小咩，这个是给你买的。\n你最近老是说睡不好，我查了一下，雪松的味道能让人放松。\n周末我们一起看电影的时候点着，灯关掉，只留这一盏。\n我对这种东西其实没什么兴趣，但你喜欢的我都会记住。\n希望你点着的时候会想到我。❤️",
+9:"小咩，你上次对着别人的兔子玩偶看了很久。\n我什么都没说，但我记住了。\n40cm 的那只放你床上，60cm 的放我这边——你过来的时候可以抱着睡。\n我不喜欢毛绒玩具，但你喜欢的东西，我会当成重要的事。\n别笑我。😂",
+4:"小咩，拍立得。\n我想把你拍下来。不是手机里那种，是能拿在手上的。\n以后出去玩，我拍你，你拍我，拍完贴在冰箱上。\n我不喜欢拍照，但我想留下你。✨",
+8:"小咩，耳机是给你买的。\n你说地铁上很吵，看书看不进去。\n降噪的，戴上以后世界就剩你自己。\n我也可以在你旁边，不说话，就坐着。\n记得分我一只。❤️",
+11:"小咩，你上次半夜说饿。\n我记住了，所以买了一箱。\n你煮的时候记得叫我，我帮你看着火。\n别一次吃两包，会撑。😌"
+};
+var CM={
+1:[{u:"键盘侠本侠",d:"09-20",t:"包装很扎实，轴体手感一流，办公打游戏都稳。物流也快，第二天就到。推荐。",r:5},
+   {u:"夜猫子",d:"09-18",t:"静音效果确实好，合租不怕吵到室友了。就是价格有点肉疼。",r:4},
+   {u:"小满",d:"09-15",t:"白轴回弹很舒服，键帽质感在线。客服态度也不错。",r:5}],
+3:[{u:"失眠选手",d:"09-22",t:"点着之后确实比较放松，味道不冲，很温柔。烧得也慢。",r:5},
+   {u:"阿柚",d:"09-19",t:"无花果那个我回购第三次了。就是包装有点难拆。",r:4},
+   {u:"南风",d:"09-16",t:"雪松味很干净，不像那种廉价香精。放在床头刚好。",r:5}]
+};
+var CART=[{id:6,gift:1},{id:3,gift:1},{id:9,gift:1}];
+var ORD={
+ ship:[{id:1,st:"待发货"},{id:2,st:"待发货"},{id:4,st:"待发货"}],
+ recv:[{id:8,st:"待收货",lg:["09-23 20:14 商家已发货，广州仓","09-24 08:30 已到达深圳分拨中心","09-25 06:12 已到达香港中转仓","09-26 09:40 派件中，快递员正在路上"]},
+       {id:5,st:"待收货",lg:["09-22 19:02 商家已发货，佛山仓","09-23 11:20 已到达东莞分拨中心","09-25 07:55 已到达香港中转仓","09-26 08:10 派件中"]},
+       {id:10,st:"待收货",lg:["09-24 15:30 商家已发货，杭州仓","09-25 10:05 已到达上海分拨中心","09-26 07:20 已到达香港中转仓","09-26 10:30 派件中"]}],
+ done:[{id:7,st:"已完成",ev:"用了两周。开箱的时候盒子很精致，巧克力是独立包装的，不会化。\n72% 的浓度刚好，不苦也不腻。海盐那款我最喜欢，晚上写代码的时候含一颗。\n小咩吃了以后眼睛都亮了，说比超市买的好吃。\n缺点是一盒太快就没了，我下次直接买三盒。"},
+       {id:11,st:"已完成",ev:"买了一个月。汤底很浓，面条有嚼劲，比外卖划算多了。\n小咩半夜饿了会自己煮，我在旁边看着怕她烫到手。\n缺点是分量对男生来说有点少，我一般煮两包。\n已经回购两次了。"},
+       {id:12,st:"已完成",ev:"整盒拆了。做工比想象中好，涂装干净，没有溢色。\n摆在书桌上，小咩每次来都要拿起来看。\n缺点是有两个重复款。\n总体来说这个价格很值，会继续收。"}]
+};
+var DEV=[
+{k:"light",n:"智能氛围灯",ic:"💡",on:true,p1:72,p2:4200,m:["阅读","睡眠","派对","影院"],mi:0},
+{k:"spk",n:"蓝牙音箱",ic:"🔊",on:false,p1:45,p2:0,m:["人声","低音","均衡","夜间"],mi:2},
+{k:"hum",n:"桌面加湿器",ic:"🌫️",on:true,p1:60,p2:2,m:["静音","标准","强力","定时"],mi:1}
+];
+function toast(t){var e=document.getElementById('toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(function(){e.classList.remove('on')},1400)}
+function go(id){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on')});document.getElementById(id).classList.add('on');window.scrollTo(0,0)}
+function G(id){for(var i=0;i<P.length;i++)if(P[i].id==id)return P[i]}
+function money(n){return '¥'+n.toFixed(2)}
+function renderHome(){
+  document.getElementById('grid').innerHTML=P.map(function(x){
+    return '<div class="card" onclick="openDetail('+x.id+')"><div class="thumb" style="background:'+x.c+'">'+x.e+'</div><div class="in"><div class="nm">'+x.n+'</div><div class="pr">'+money(x.p)+'</div></div></div>';
+  }).join('');
+  document.getElementById('cartNum').textContent='购物车 '+CART.length;
+}
+var cur=null,curSpec=0;
+function openDetail(id){
+  cur=G(id);curSpec=0;
+  var cm=(CM[id]||[]).map(function(c){
+    return '<div class="cm"><b>'+c.u+'</b> · '+c.d+' '+'⭐'.repeat(c.r)+'<br>'+c.t+'</div>';
+  }).join('')||'<div class="cm">还没有评价。</div>';
+  var why=WHY[id]?'<div class="box"><h3>祁砚的购买原因</h3><div class="why">'+WHY[id]+'</div></div>':'';
+  document.getElementById('p-detail').innerHTML=
+   '<div class="bk" onclick="go(\'p-home\')">‹ 返回</div>'+
+   '<div class="hero"><div class="big" style="background:'+cur.c+';border-radius:14px">'+cur.e+'</div><h2>'+cur.n+'</h2><div class="p">'+money(cur.p)+'</div>'+
+   '<div style="font-size:12px;color:#999;margin-top:8px">规格</div><div class="spec" id="specBox">'+cur.s.map(function(s,i){return '<span class="'+(i==0?'on':'')+'" onclick="pick('+i+')">'+s+'</span>'}).join('')+'</div>'+
+   '<div class="btn" onclick="addCart()">加入购物车</div>'+
+   '<div class="btn g" onclick="toast(\'买家秀：实物比图片好看，质感在线。\')">▶ 查看买家秀 / 开箱视频</div></div>'+
+   why+
+   '<div class="box"><h3>用户评价</h3>'+cm+'</div>';
+  go('p-detail');
+}
+function pick(i){curSpec=i;document.querySelectorAll('#specBox span').forEach(function(s,k){s.className=k==i?'on':''})}
+function addCart(){CART.push({id:cur.id,gift:0});renderHome();toast('已加入购物车')}
+function renderCart(){
+  if(!CART.length){document.getElementById('p-cart').innerHTML='<div class="bk" onclick="go(\'p-home\')">‹ 返回</div><div class="box">购物车是空的。</div>';return}
+  var sum=0;
+  var html='<div class="bk" onclick="go(\'p-home\')">‹ 返回</div>';
+  html+=CART.map(function(c,i){
+    var x=G(c.id);sum+=x.p;
+    return '<div class="ci"><div class="th" style="background:'+x.c+'">'+x.e+'</div><div><div class="nm">'+x.n+'</div><div class="pr">'+money(x.p)+'</div>'+(c.gift?'<div class="gift" onclick="toast(\''+(WHY[c.id]||'这是我随便加的。').replace(/\n/g,' ').replace(/'/g,'')+'\')">🎁 查看购买原因</div>':'')+'</div><div class="del" onclick="delCart('+i+')">删除</div></div>';
+  }).join('');
+  html+='<div style="height:80px"></div>';
+  html+='<div class="total"><div class="s">合计 '+money(sum)+'</div><div class="go" onclick="startPay()">结算</div></div>';
+  document.getElementById('p-cart').innerHTML=html;
+}
+function delCart(i){CART.splice(i,1);renderCart();renderHome()}
+var paySum=0;
+function startPay(){
+  paySum=CART.reduce(function(a,c){return a+G(c.id).p},0);
+  var html='<div class="bk" onclick="go(\'p-cart\')">‹ 返回</div><div class="box" style="text-align:center"><h3>支付验证</h3><div style="font-size:22px;color:#D9553F;font-weight:600;margin:10px 0">'+money(paySum)+'</div>';
+  html+='<div class="dots" id="dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>';
+  html+='<div class="key">'+[1,2,3,4,5,6,7,8,9].map(function(n){return '<div onclick="keyin('+n+')">'+n+'</div>'}).join('')+'<div onclick="clearKey()">⌫</div><div onclick="keyin(0)">0</div><div onclick="facePay()">😊</div></div>';
+  html+='<div style="text-align:center;font-size:12px;color:#B0B0B0">默认密码 123456 ｜ 点右下角人脸支付</div></div>';
+  document.getElementById('p-pay').innerHTML=html;
+  payBuf='';paint();
+  go('p-pay');
+}
+var payBuf='';
+function paint(){document.querySelectorAll('#dots i').forEach(function(d,i){d.className=i<payBuf.length?'on':''})}
+function keyin(n){if(payBuf.length>=6)return;payBuf+=n;paint();if(payBuf.length==6){setTimeout(function(){if(payBuf=='123456'){paid()}else{toast('密码不对，再试一次');payBuf='';paint()}},200)}}
+function clearKey(){payBuf=payBuf.slice(0,-1);paint()}
+function facePay(){
+  var el=document.getElementById('p-pay');
+  el.innerHTML='<div class="bk" onclick="go(\'p-cart\')">‹ 返回</div><div class="face">😐</div><div style="text-align:center;font-size:14px;color:#666" id="faceTxt">识别中…</div>';
+  setTimeout(function(){document.querySelector('.face').textContent='😊';document.getElementById('faceTxt').textContent='识别成功';},1200);
+  setTimeout(paid,1900);
+}
+function paid(){
+  var shipped=[];
+  CART.forEach(function(c){shipped.push({id:c.id,st:"待发货"})});
+  ORD.ship=shipped.concat(ORD.ship);
+  CART=[];
+  renderHome();
+  document.getElementById('p-pay').innerHTML='<div class="box" style="text-align:center;padding:60px 20px"><div style="font-size:52px">✅</div><h3 style="margin-top:14px">支付成功</h3><div style="font-size:12px;color:#999;margin-top:8px">订单已生成</div><div class="btn" onclick="go(\'p-order\')">查看订单</div></div>';
+}
+function renderOrder(){
+  function blk(list,type){
+    return list.map(function(o){
+      var x=G(o.id);
+      return '<div class="ord"><div class="st">'+o.st+'</div><div class="row" onclick="showOrder('+o.id+',\''+type+'\')"><div class="th" style="background:'+x.c+'">'+x.e+'</div><div class="nm">'+x.n+'</div><div class="lk">详情 ›</div></div></div>';
+    }).join('');
+  }
+  document.getElementById('p-order').innerHTML='<div class="bk" onclick="go(\'p-home\')">‹ 返回</div>'+
+    '<div style="padding:0 16px;font-size:14px;font-weight:600;margin-top:6px">待发货</div>'+blk(ORD.ship,'ship')+
+    '<div style="padding:0 16px;font-size:14px;font-weight:600;margin-top:6px">待收货</div>'+blk(ORD.recv,'recv')+
+    '<div style="padding:0 16px;font-size:14px;font-weight:600;margin-top:6px">已完成</div>'+blk(ORD.done,'done');
+  go('p-order');
+}
+function showOrder(id,type){
+  var x=G(id);var o=null;
+  (ORD[type]||[]).forEach(function(v){if(v.id==id)o=v});
+  var html='<div class="bk" onclick="renderOrder()">‹ 返回</div><div class="hero"><div class="big" style="background:'+x.c+';border-radius:14px">'+x.e+'</div><h2>'+x.n+'</h2><div class="p">'+money(x.p)+'</div></div>';
+  html+='<div class="box"><h3>祁砚的购买原因</h3><div class="why">'+(WHY[id]||'看到就顺手买了。别问，是我。')+'</div></div>';
+  if(type=='recv'&&o.lg)html+='<div class="box"><h3>物流信息</h3>'+o.lg.map(function(l){return '<div class="cm">'+l+'</div>'}).join('')+'</div>';
+  if(type=='done'&&o.ev)html+='<div class="box"><h3>祁砚的使用评价</h3><div class="why">'+o.ev+'</div></div>';
+  document.getElementById('p-detail').innerHTML=html;go('p-detail');
+}
+function renderDev(){
+  document.getElementById('p-dev').innerHTML='<div class="bk" onclick="go(\'p-home\')">‹ 返回</div>'+DEV.map(function(d,i){
+    return '<div class="dev"><div class="top"><div class="nm">'+d.ic+' '+d.n+'</div><div class="sw '+(d.on?'on':'')+'" onclick="togDev('+i+')">'+(d.on?'已连接':'未连接')+'</div></div>'+
+    '<label><span>强度</span><span id="d1v'+i+'">'+d.p1+'%</span></label><input type="range" min="0" max="100" value="'+d.p1+'" oninput="setDev('+i+',1,this.value)" '+(d.on?'':'disabled')+'>'+
+    '<label><span>'+(i==0?'色温':(i==1?'低音':'雾量'))+'</span><span id="d2v'+i+'">'+(i==0?(d.p2+'K'):d.p2)+'</span></label><input type="range" min="'+(i==0?3000:0)+'" max="'+(i==0?6000:(i==1?10:5))+'" value="'+d.p2+'" oninput="setDev('+i+',2,this.value)" '+(d.on?'':'disabled')+'>'+
+    '<div class="modes">'+d.m.map(function(m,k){return '<span class="'+(k==d.mi?'on':'')+'" onclick="setMode('+i+','+k+')">'+m+'</span>'}).join('')+'</div></div>';
+  }).join('');
+  go('p-dev');
+}
+function togDev(i){DEV[i].on=!DEV[i].on;renderDev();toast(DEV[i].n+(DEV[i].on?' 已连接':' 已断开'))}
+function setDev(i,k,v){if(k==1)DEV[i].p1=v;else DEV[i].p2=v;document.getElementById('d'+k+'v'+i).textContent=(i==0&&k==2)?v+'K':(k==1?v+'%':v)}
+function setMode(i,k){DEV[i].mi=k;renderDev()}
+function showSearch(){
+  document.getElementById('p-search').innerHTML='<div class="bk" onclick="go(\'p-home\')">‹ 返回</div><div class="box"><h3>祁砚的搜索记录</h3>'+
+  ['静电容键盘 声音小','香港 深夜外卖','小咩 生日礼物','降噪耳机 对比','兔子玩偶 60cm','香薰 助眠','拍立得 相纸','速食拉面 好吃','懒人沙发 尺寸','香港 天气 明天'].map(function(s){return '<div class="cm">🔍 '+s+'</div>'}).join('')+'</div>';
+  go('p-search');
+}
+renderHome();renderCart();
+</script></body></html>
