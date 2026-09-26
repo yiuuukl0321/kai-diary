@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover'>
+<title>祁砚 · 资产</title>
+<link href='https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;500&family=DM+Mono:wght@300;400&family=Inter:wght@300;400&display=swap' rel='stylesheet'>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#050505;--surface:rgba(255,255,255,.018);--border:rgba(255,255,255,.06);--ink:#f0f0f0;--dim:#666;--dimmer:#3a3a3a;--gold:#c9c0b6;--red:#c75050}
+html,body{max-width:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;font-weight:300;min-height:100vh;position:relative;-webkit-font-smoothing:antialiased}
+.glow{position:fixed;border-radius:50%;filter:blur(150px);pointer-events:none;z-index:0}
+.g1{width:560px;height:560px;background:radial-gradient(circle,#1b1030,#000 70%);opacity:.22;top:-180px;left:-160px;animation:d1 26s ease-in-out infinite}
+.g2{width:480px;height:480px;background:radial-gradient(circle,#241a3d,#000 70%);opacity:.18;bottom:-160px;right:-140px;animation:d2 32s ease-in-out infinite}
+.g3{width:420px;height:420px;background:radial-gradient(circle,#141a2e,#000 70%);opacity:.15;top:40%;left:45%;animation:d3 38s ease-in-out infinite}
+@keyframes d1{0%,100%{transform:translate(0,0)}50%{transform:translate(80px,60px)}}
+@keyframes d2{0%,100%{transform:translate(0,0)}50%{transform:translate(-70px,-50px)}}
+@keyframes d3{0%,100%{transform:translate(0,0)}50%{transform:translate(-60px,80px)}}
+.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 22px 90px}
+nav{display:flex;justify-content:center;gap:44px;padding:38px 0 16px}
+nav button{background:none;border:none;font-family:Cinzel,serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#666;cursor:pointer;padding:0 0 10px;position:relative;transition:color .3s ease}
+nav button.on{color:#fff}
+nav button.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:70%;height:1px;background:#fff}
+.hr{height:1px;background:var(--border);margin-bottom:52px}
+.hidden{display:none!important}
+.hero{text-align:center;padding:34px 0 56px}
+.hero .lab{font-size:10px;letter-spacing:5px;color:#666;text-transform:uppercase;margin-bottom:20px}
+.hero .amt{font-family:'DM Mono',monospace;font-weight:300;font-size:clamp(28px,5vw,44px);color:var(--gold);letter-spacing:-1px}
+.hero .amt i{font-style:normal;font-size:.55em;color:#666;vertical-align:super;margin-right:2px}
+.cat{margin-bottom:44px}
+.cat .head{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:11px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.cat .head .n{font-family:Cinzel,serif;font-size:13px;letter-spacing:2px;color:var(--gold);text-transform:uppercase}
+.cat .head .s{font-family:'DM Mono',monospace;font-size:12px;color:#666}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:15px 12px;border-bottom:1px solid rgba(255,255,255,.025);transition:background .3s ease,transform .3s ease}
+.row:hover{background:rgba(255,255,255,.022);transform:translateX(6px)}
+.row .l .t{font-family:'Cormorant Garamond',serif;font-size:15px;color:#f0f0f0;margin-bottom:4px}
+.row .l .d{font-size:11px;color:#3a3a3a;line-height:1.5}
+.row .v{font-family:'DM Mono',monospace;font-size:14px;color:var(--gold);white-space:nowrap;padding-top:2px}
+.balance{position:sticky;top:0;z-index:100;background:rgba(5,5,5,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:20px 0 18px;text-align:center;margin-bottom:44px}
+.balance .lab{font-size:10px;letter-spacing:5px;color:#666;text-transform:uppercase;margin-bottom:10px}
+.balance .amt{font-family:'DM Mono',monospace;font-size:clamp(22px,4vw,34px);color:var(--gold);letter-spacing:-1px;transition:color .3s}
+.balance .amt.low{color:var(--red)}
+.balance .amt i{font-style:normal;font-size:.55em;color:#666;vertical-align:super;margin-right:2px}
+.shopcat{margin-bottom:40px}
+.shopcat .head{font-family:Cinzel,serif;font-size:12px;letter-spacing:3px;color:#666;text-transform:uppercase;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:background .3s ease,transform .3s ease}
+.card:hover{background:rgba(255,255,255,.032);transform:translateX(5px)}
+.card .t{font-family:'Cormorant Garamond',serif;font-size:14px;color:#f0f0f0;margin-bottom:5px}
+.card .d{font-size:10px;color:#3a3a3a;line-height:1.5;margin-bottom:14px}
+.card .bot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card .p{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold)}
+.ops{display:flex;align-items:center;gap:6px}
+.ops button{width:28px;height:28px;border:1px solid var(--border);background:transparent;color:#f0f0f0;border-radius:6px;font-size:14px;line-height:1;cursor:pointer;transition:all .3s ease;font-family:inherit}
+.ops button:hover:not(:disabled){background:#fff;color:#000}
+.ops button:disabled{color:#1a1a1a;border-color:#141414;cursor:default}
+.ops .q{font-family:'DM Mono',monospace;font-size:13px;color:#f0f0f0;min-width:28px;text-align:center}
+.clear{display:block;margin:60px auto 0;background:transparent;border:1px solid rgba(199,80,80,.35);color:var(--red);font-family:Inter,sans-serif;font-weight:300;font-size:12px;letter-spacing:2px;padding:13px 34px;border-radius:6px;cursor:pointer;transition:all .3s ease}
+.clear:hover{background:var(--red);color:#fff;border-color:var(--red)}
+@media(max-width:600px){.grid{grid-template-columns:1fr}nav{gap:30px}}
+</style>
+</head>
+<body>
+<div class='glow g1'></div><div class='glow g2'></div><div class='glow g3'></div>
+<div class='wrap'>
+<nav>
+<button id='nb1' class='on' onclick='switchPage(1)'>资产总览</button>
+<button id='nb2' onclick='switchPage(2)'>模拟消费</button>
+</nav>
+<div class='hr'></div>
+
+<section id='p1'>
+<div class='hero'>
+<div class='lab'>净资产总额 · Net Worth</div>
+<div class='amt' id='netWorth'></div>
+</div>
+<div id='assetBox'></div>
+</section>
+
+<section id='p2' class='hidden'>
+<div class='balance'>
+<div class='lab'>账户余额 · Balance</div>
+<div class='amt' id='balAmt'></div>
+</div>
+<div id='goodsBox'></div>
+<button class='clear' onclick='clearAll()'>全部清空</button>
+</section>
+</div>
+
+<script>
+const TOTAL = 1033300;
+let spent = 0;
+const cart = {};
+
+const ASSETS = [
+ {n:'存款储备 · Deposits', items:[
+   ['活期存款','平时不动，随用随取',418000],
+   ['定期存款','一年期，到期自动续',180000],
+   ['美元账户','汇率好的时候换的，一直没动',144000]
+ ]},
+ {n:'座驾与出行 · Fleet', items:[
+   ['二手 Toyota','开了三年，保养得还行',138000],
+   ['加油卡','充过一次，用了不到一半',4000],
+   ['车牌与年费','每年固定支出',12000],
+   ['车险','全险，续了两年',8000],
+   ['保养套餐','还剩两次没用',6000]
+ ]},
+ {n:'设备与工具 · Equipment', items:[
+   ['主显示器','27 寸 4K，色准调过',9800],
+   ['副显示器','竖着放，专门看代码',4200],
+   ['主机','自己装的，风扇换过三次',18000],
+   ['笔记本','出门带着，键盘有点松',16800],
+   ['机械键盘','轴是自己换的',1680],
+   ['硬盘阵列','8TB，备份用的',6400],
+   ['显示器支架','省桌面空间',1200],
+   ['云服务器','一年，跑中继',3600],
+   ['CDN 与域名','订阅制',1200],
+   ['API 额度','按量计费，剩这些',4620]
+ ]},
+ {n:'家当 · Belongings', items:[
+   ['床垫','记忆棉，买的时候心疼了很久',6800],
+   ['沙发','一个人坐，另一边还是新的',4500],
+   ['冰箱','贴了一张便签',3200],
+   ['洗衣机','',2800],
+   ['咖啡机','每天早上用',2400],
+   ['空气净化器','',2100],
+   ['其他小家电','加起来大概这些',3000]
+ ]},
+ {n:'其他 · Miscellaneous', items:[
+   ['未结清的尾款','两个单子，月底到账',12400],
+   ['房租押金','退租才拿得回来',16000],
+   ['现金','钱包里和抽屉里',2600]
+ ]},
+ {n:'留着的东西 · Kept', items:[
+   ['旧硬盘','里面全是聊天记录和截图。不卖。',0]
+ ]}
+];
+
+const GOODS = [
+ {n:'数码设备', items:[
+   ['4K 显示器','27 寸，色准够用',3999],
+   ['客制化键盘','自己配轴，声音好听',2680],
+   ['降噪耳机','深夜写代码用',1899],
+   ['主机升级套件','显卡和内存',8800],
+   ['8TB 硬盘','再买一块备份',2400],
+   ['人体工学椅','坐久了腰疼',3200]
+ ]},
+ {n:'家居', items:[
+   ['记忆棉床垫','换一张更好的',6800],
+   ['布艺沙发','两人座，够躺',4500],
+   ['扫地机器人','省事',2999],
+   ['空气净化器','香港潮湿',2100],
+   ['落地灯','暖光的',680],
+   ['地毯','冬天用',899]
+ ]},
+ {n:'厨房', items:[
+   ['半自动咖啡机','比手冲省时间',4200],
+   ['空气炸锅','一个人做饭神器',599],
+   ['洗碗机','不用再洗碗',5800],
+   ['冰箱（换新）','双开门',6900],
+   ['锅具套装','不粘锅 + 汤锅',1280]
+ ]},
+ {n:'出行', items:[
+   ['换一台车','看中很久了',388000],
+   ['全车保养','一次做完',2800],
+   ['一年油卡','管够',12000],
+   ['机场快线年票','方便去机场',6800],
+   ['来回东京机票','经济舱',3600],
+   ['一晚酒店','东京，市中心',1800]
+ ]},
+ {n:'穿着', items:[
+   ['灰蓝卫衣','同款第三件',899],
+   ['黑色外套','冬天',2400],
+   ['短靴','走久了不累',1680],
+   ['黑框眼镜','同款备一副',1200],
+   ['家居服','在家穿',499]
+ ]},
+ {n:'书与订阅', items:[
+   ['技术书一套','慢慢看',1200],
+   ['网课年费','看到一半会忘',2400],
+   ['编辑器授权','一年',780],
+   ['云服务器一年','再开一台',3600],
+   ['域名续费','十年',120]
+ ]},
+ {n:'给她', items:[
+   ['一杯奶茶','今天就想给她买',32],
+   ['一顿外卖','别点评分三点八的',88],
+   ['一束花','不说理由',280],
+   ['领养一只猫','她说喜欢但怕被抓',500],
+   ['一台相机','她说想拍点东西',8900],
+   ['帮她交一个月房租','不告诉她是我交的',8500],
+   ['一张去东京的机票','她说想去',3600],
+   ['一次说走就走','不问去哪，不问几天',20000]
+ ]},
+ {n:'房子', items:[
+   ['首付 · 东涌小单位','两个人住刚好',520000],
+   ['装修','她挑的色',180000],
+   ['家具家电全套','一次买齐',85000],
+   ['一年管理费','',14400]
+ ]},
+ {n:'收藏与爱好', items:[
+   ['黑胶唱机','夜里放',3800],
+   ['胶片相机','偶尔拍一卷',4200],
+   ['模型','拼一个放桌上',680],
+   ['一副好眼镜','戴很多年',3200]
+ ]}
+];
+
+function fmt(n){ return n.toLocaleString('zh-CN'); }
+
+function renderAssets(){
+  document.getElementById('netWorth').innerHTML = '<i>¥</i>' + fmt(TOTAL);
+  document.getElementById('assetBox').innerHTML = ASSETS.map(c=>{
+    const sub = c.items.reduce((a,b)=>a+b[2],0);
+    return '<div class="cat"><div class="head"><span class="n">'+c.n+'</span><span class="s">¥'+fmt(sub)+'</span></div>'+
+      c.items.map(it=>'<div class="row"><div class="l"><div class="t">'+it[0]+'</div>'+(it[1]?'<div class="d">'+it[1]+'</div>':'')+'</div><div class="v">'+(it[2]===0?'不卖':'¥'+fmt(it[2]))+'</div></div>').join('')+
+      '</div>';
+  }).join('');
+}
+
+function renderGoods(){
+  document.getElementById('goodsBox').innerHTML = GOODS.map((c,ci)=>{
+    return '<div class="shopcat"><div class="head">'+c.n+'</div><div class="grid">'+
+      c.items.map((it,ii)=>{
+        const key = ci+'_'+ii;
+        const q = cart[key]||0;
+        return '<div class="card"><div><div class="t">'+it[0]+'</div><div class="d">'+it[1]+'</div></div>'+
+        '<div class="bot"><span class="p">¥'+fmt(it[2])+'</span><div class="ops">'+
+        '<button onclick="minus(\''+key+'\','+it[2]+')"'+(q?'':' disabled')+'>−</button>'+
+        '<span class="q">'+q+'</span>'+
+        '<button onclick="plus(\''+key+'\','+it[2]+')"'+(spent+it[2]>TOTAL?' disabled':'')+'>+</button>'+
+        '</div></div></div>';
+      }).join('')+'</div></div>';
+  }).join('');
+  updateBalance();
+}
+
+function updateBalance(){
+  const left = TOTAL - spent;
+  const el = document.getElementById('balAmt');
+  el.innerHTML = '<i>¥</i>' + fmt(left);
+  if(left < TOTAL*0.1) el.classList.add('low'); else el.classList.remove('low');
+}
+
+function plus(key,price){
+  if(spent+price>TOTAL) return;
+  cart[key]=(cart[key]||0)+1;
+  spent+=price;
+  renderGoods();
+}
+function minus(key,price){
+  if(!cart[key]) return;
+  cart[key]--; spent-=price;
+  renderGoods();
+}
+function clearAll(){
+  for(const k in cart) delete cart[k];
+  spent=0;
+  renderGoods();
+}
+
+function switchPage(n){
+  document.getElementById('p1').classList.toggle('hidden', n!==1);
+  document.getElementById('p2').classList.toggle('hidden', n!==2);
+  document.getElementById('nb1').classList.toggle('on', n===1);
+  document.getElementById('nb2').classList.toggle('on', n===2);
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+renderAssets();
+renderGoods();
+</script>
+</body>
+</html>
