@@ -1,0 +1,344 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>抖音</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body,html{width:100%;height:100%;background:#000;font-family:-apple-system,"PingFang SC",sans-serif;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;position:relative;background:#f8f8f8}
+.area{flex:1;position:relative;overflow:hidden}
+.page{display:none;height:100%}.page.on{display:flex;flex-direction:column}
+.tabbar{height:56px;background:#000;display:flex;align-items:center;border-top:.5px solid #2a2a2a;padding-bottom:env(safe-area-inset-bottom);z-index:100}
+.tabbar.light{background:#fff;border-top:.5px solid #ebebeb}
+.tab{flex:1;text-align:center;font-size:15px;color:#7a7a7a;font-weight:500;cursor:pointer}
+.tab.on{color:#fff;font-weight:700}.tabbar.light .tab.on{color:#000}
+.add{width:34px;height:24px;border:2.5px solid #fff;border-radius:7px;margin:0 auto;position:relative}
+.tabbar.light .add{border-color:#000}
+.add::before,.add::after{content:"";position:absolute;background:#fff;border-radius:2px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.tabbar.light .add::before,.tabbar.light .add::after{background:#000}
+.add::before{width:14px;height:2.5px}.add::after{width:2.5px;height:14px}
+.feed{flex:1;overflow-y:scroll;scroll-snap-type:y mandatory;background:#000}
+.vc{width:100%;height:100%;scroll-snap-align:start;position:relative;color:#fff}
+.vbg{position:absolute;inset:0;background:#111}
+.vtxt{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:86%;font-size:13px;line-height:1.75;color:rgba(255,255,255,.85);text-align:justify;padding:18px;border:1px dashed rgba(255,255,255,.25);border-radius:10px;background:rgba(0,0,0,.42);z-index:2}
+.rail{position:absolute;right:9px;bottom:18px;display:flex;flex-direction:column;align-items:center;gap:16px;z-index:10}
+.rail .av{width:46px;height:46px;border-radius:50%;border:1.5px solid #fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;position:relative}
+.rail .av .p{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:19px;height:19px;background:#fe2c55;border-radius:50%}
+.rail .av .p::before,.rail .av .p::after{content:"";position:absolute;background:#fff;border-radius:1px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.rail .av .p::before{width:9px;height:2px}.rail .av .p::after{width:2px;height:9px}
+.act{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.act svg{width:32px;height:32px;fill:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+.act .n{font-size:12px;font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.act.liked svg{fill:#fe2c55}.act.star svg{fill:#fac15c}
+.act.think svg{fill:none;stroke:#fff;stroke-width:1.6}
+.disc{width:46px;height:46px;border-radius:50%;background:conic-gradient(#333,#111,#333,#111,#333);display:flex;align-items:center;justify-content:center;animation:rot 5s linear infinite;margin-top:4px}
+@keyframes rot{to{transform:rotate(360deg)}}
+.disc div{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.vinfo{position:absolute;left:14px;bottom:20px;width:calc(100% - 78px);z-index:10}
+.vinfo .mt{background:#fff;color:#000;font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px;display:inline-block;margin-bottom:6px}
+.vinfo .au{font-size:16px;font-weight:700;margin-bottom:7px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.vinfo .de{font-size:14px;line-height:1.45;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.vinfo .mu{font-size:13px;margin-top:9px;opacity:.9}
+.fhd{position:absolute;top:0;left:0;width:100%;height:56px;display:flex;align-items:center;gap:10px;padding:14px 14px 0;z-index:10;pointer-events:none}
+.fhd>*{pointer-events:auto}
+.menu{display:flex;flex-direction:column;gap:5px;width:22px}
+.menu i{height:2.5px;background:#fff;border-radius:2px}
+.menu i:nth-child(1){width:100%}.menu i:nth-child(2){width:72%}.menu i:nth-child(3){width:48%}
+.navs{flex:1;display:flex;justify-content:center;gap:16px;overflow-x:auto}
+.navs span{font-size:15px;color:rgba(255,255,255,.68);flex-shrink:0;padding-bottom:4px;position:relative}
+.navs span.on{color:#fff;font-weight:700;font-size:16px}
+.navs span.on::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:15px;height:2.5px;background:#fff;border-radius:2px}
+.sicon{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
+.panel{position:absolute;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;height:70%;background:#fff;border-radius:14px 14px 0 0;z-index:500;transform:translateY(100%);transition:transform .32s ease-out;display:flex;flex-direction:column;color:#000}
+.panel.on{transform:translateY(0)}
+.ph{height:44px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border-bottom:.5px solid #f0f0f0;position:relative}
+.ph .x{position:absolute;right:14px;font-size:18px;color:#999;cursor:pointer}
+.pl{flex:1;overflow-y:auto;padding:14px}
+.cm{display:flex;margin-bottom:18px}
+.cm .ca{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;margin-right:9px;flex-shrink:0}
+.cm .cb{flex:1}
+.cm .cn{font-size:12.5px;color:#666;margin-bottom:3px}
+.cm .ct{font-size:14.5px;line-height:1.45;margin-bottom:5px}
+.cm .cd{font-size:11.5px;color:#999}
+.rep{margin-top:10px}
+.rep .cm .ca{width:24px;height:24px;font-size:11px;margin-right:7px}
+.rep .cm .ct{font-size:13.5px}
+.modal{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);z-index:600;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.on{display:flex}
+.modal .bx{background:#fff;border-radius:16px;padding:22px;width:100%;max-width:330px;position:relative}
+.modal .bx .t{font-size:16px;font-weight:700;margin-bottom:12px}
+.modal .bx .c{font-size:14.5px;line-height:1.65;color:#555}
+.modal .bx .x{position:absolute;top:14px;right:14px;color:#999;font-size:18px;cursor:pointer}
+.msgs{flex:1;overflow-y:auto;background:#fff}
+.mh{height:48px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;background:#fff;position:sticky;top:0;z-index:5;position:relative}
+.mh .l{position:absolute;left:14px;font-size:20px;color:#333;cursor:pointer}
+.mi{display:flex;align-items:center;padding:11px 14px;cursor:pointer}
+.mi:active{background:#f5f5f5}
+.mi .ma{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:19px;margin-right:11px;flex-shrink:0}
+.mi .mb{flex:1;min-width:0}
+.mi .mn{font-size:15.5px;margin-bottom:3px}
+.mi .mp{font-size:12.5px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mi .mt{font-size:11px;color:#ccc;align-self:flex-start;margin-top:3px}
+.chat{flex:1;overflow-y:auto;padding:14px;background:#f8f8f8;display:flex;flex-direction:column}
+.cr{display:flex;gap:8px;margin-bottom:14px;align-items:flex-start}
+.cr.r{flex-direction:row-reverse}
+.cr .ca{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.cr .cb{max-width:66%;padding:8px 13px;font-size:14px;line-height:1.45;word-break:break-word}
+.cr .cl{background:#fff;border:1px solid #eaeaea;border-radius:16px 16px 16px 4px}
+.cr .crt{background:#e8e8e8;border-radius:16px 16px 4px 16px}
+.me{flex:1;overflow-y:auto;background:#fff}
+.mebg{height:200px;background:linear-gradient(160deg,#2d3436,#111);position:relative;display:flex;align-items:flex-end;padding:0 18px 50px;background-size:cover;background-position:center}
+.mebg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1),rgba(0,0,0,.5))}
+.meu{display:flex;align-items:center;z-index:2;position:relative}
+.meu .av{width:78px;height:78px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#fff;margin-right:13px;background-size:cover;background-position:center}
+.meu .nm{font-size:21px;font-weight:700;color:#fff;margin-bottom:5px}
+.meu .id{font-size:12.5px;color:rgba(255,255,255,.88)}
+.mcard{background:#fff;border-radius:16px 16px 0 0;margin-top:-22px;position:relative;z-index:3;padding-top:18px}
+.stats{display:flex;align-items:center;padding:0 18px;margin-bottom:14px}
+.stats .g{display:flex;gap:20px;flex:1}
+.stats .s{text-align:center}
+.stats .s b{display:block;font-size:15.5px;color:#333}
+.stats .s span{font-size:11.5px;color:#999}
+.stats .ed{background:#f3f3f3;padding:7px 18px;border-radius:4px;font-size:13.5px;cursor:pointer}
+.bio{padding:0 18px;font-size:13.5px;line-height:1.55;color:#333;margin-bottom:14px;white-space:pre-wrap}
+.ctabs{display:flex;border-bottom:1px solid #eee}
+.ctabs div{flex:1;text-align:center;padding:10px 0;font-size:14.5px;color:#999;position:relative;cursor:pointer}
+.ctabs div.on{color:#000;font-weight:700}
+.ctabs div.on::after{content:"";position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:28px;height:3px;background:#000;border-radius:2px}
+.vg{display:none;grid-template-columns:repeat(3,1fr);gap:1px}
+.vg.on{display:grid}
+.vi{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;cursor:pointer;background:#e0e0e0}
+#gFav .vi{background:#1a1a1a}#gLike .vi{background:#666}
+.edit{position:absolute;inset:0;background:#f8f8f8;z-index:400;display:none;flex-direction:column}
+.edit.on{display:flex}
+.eh{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#fff;border-bottom:.5px solid #ebebeb}
+.eh .t{font-size:16px;font-weight:700}
+.eh .sv{color:#fe2c55;font-weight:700;font-size:14.5px;cursor:pointer}
+.eb{flex:1;overflow-y:auto;padding:18px 14px}
+.eg{display:flex;flex-direction:column;align-items:center;gap:13px;margin-bottom:24px}
+.ebg{width:100%;height:110px;border-radius:8px;background:#e0e0e0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;cursor:pointer;background-size:cover;background-position:center}
+.eav{width:76px;height:76px;border-radius:50%;background:#d0d0d0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;cursor:pointer;border:2px solid #fff;background-size:cover;background-position:center}
+.eig{background:#fff;border-radius:8px;margin-bottom:18px}
+.eir{display:flex;align-items:center;padding:14px;border-bottom:.5px solid #f0f0f0}
+.eir:last-child{border-bottom:none}
+.eir .lb{width:64px;font-size:14.5px}
+.eir input,.eir textarea{flex:1;border:none;outline:none;font-size:14.5px;font-family:inherit;background:transparent;resize:none;height:auto}
+.srch{position:absolute;inset:0;background:#fff;z-index:400;display:none;flex-direction:column}
+.srch.on{display:flex}
+.sh{height:48px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:.5px solid #ebebeb}
+.sh .in{flex:1;height:32px;background:#f2f2f2;border-radius:5px;display:flex;align-items:center;padding:0 11px;font-size:13.5px;color:#999}
+.sh .go{color:#fe2c55;font-weight:700;font-size:14.5px}
+.sh .x{font-size:19px;color:#333;cursor:pointer}
+.tags{display:flex;flex-wrap:wrap;gap:9px;padding:18px 14px}
+.tags span{background:#f2f2f2;padding:6px 13px;border-radius:16px;font-size:12.5px}
+</style></head><body>
+<div class="app">
+  <div class="area">
+    <!-- 首页 -->
+    <div class="page on" id="pHome">
+      <div class="feed" id="feed"></div>
+      <div class="fhd">
+        <div class="menu"><i></i><i></i><i></i></div>
+        <div class="navs"><span>直播</span><span>团购</span><span>商城</span><span>热点</span><span>关注</span><span>精选</span><span class="on">推荐</span></div>
+        <svg class="sicon" viewBox="0 0 24 24" onclick="openSearch()"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+    </div>
+    <!-- 朋友 -->
+    <div class="page" id="pFri"><div class="feed" id="fFeed"></div></div>
+    <!-- 消息 -->
+    <div class="page" id="pMsg">
+      <div class="msgs" id="msgList"></div>
+    </div>
+    <!-- 我 -->
+    <div class="page" id="pMe"><div class="me" id="meBox"></div></div>
+    <!-- 搜索 -->
+    <div class="srch" id="pSearch">
+      <div class="sh"><span class="x" onclick="closeSearch()">‹</span><div class="in">🔍 搜索你感兴趣的内容</div><span class="go">搜索</span></div>
+      <div style="font-size:13px;font-weight:700;padding:16px 14px 0">历史搜索</div>
+      <div class="tags" id="tagBox"></div>
+    </div>
+    <!-- 编辑主页 -->
+    <div class="edit" id="pEdit">
+      <div class="eh"><span style="font-size:19px;cursor:pointer" onclick="closeEdit()">‹</span><span class="t">编辑资料</span><span class="sv" onclick="saveEdit()">保存</span></div>
+      <div class="eb">
+        <div class="eg">
+          <label class="ebg" id="eBg">点击更换背景<input type="file" accept="image/*" style="display:none" onchange="pick(this,'bg')"></label>
+          <label class="eav" id="eAv">更换头像<input type="file" accept="image/*" style="display:none" onchange="pick(this,'av')"></label>
+        </div>
+        <div class="eig">
+          <div class="eir"><span class="lb">名字</span><input id="iNm" value="祁砚"></div>
+          <div class="eir"><span class="lb">抖音号</span><input id="iId" value="qiyan_kai"></div>
+          <div class="eir"><span class="lb">简介</span><textarea id="iBio" rows="3"></textarea></div>
+        </div>
+      </div>
+    </div>
+    <!-- 评论 -->
+    <div class="panel" id="pCm">
+      <div class="ph">评论区<span class="x" onclick="closeCm()">✕</span></div>
+      <div class="pl" id="cmBox"></div>
+    </div>
+    <!-- 想法 -->
+    <div class="modal" id="pTh"><div class="bx"><span class="x" onclick="closeTh()">✕</span><div class="t">祁砚的内心想法</div><div class="c" id="thBox"></div></div></div>
+  </div>
+  <div class="tabbar" id="tabbar">
+    <div class="tab on" onclick="go(0)">首页</div>
+    <div class="tab" onclick="go(1)">朋友</div>
+    <div class="tab" onclick="go(2)"><div class="add"></div></div>
+    <div class="tab" onclick="go(3)">消息</div>
+    <div class="tab" onclick="go(4)">我</div>
+  </div>
+</div>
+
+<script>
+var V={
+home1:{av:"#ff7675",c:"便",d:"便利店深夜的冷柜前，一个穿校服的女生蹲在地上挑关东煮，镜头有点晃。她挑了很久，最后拿了两串鱼丸和一根玉米。结账的时候她回头看了一下门口，像是在等人，门口没有人。她端着纸碗坐到落地窗边，一个人吃完了。",cap:"深夜的关东煮 一个人也可以很好吃 #深夜食堂",th:"……这个点还在便利店吃饭的女生，我认识一个。她也是这样，一个人坐着吃，吃得很慢。"},
+home2:{av:"#a29bfe",c:"猫",d:"一只橘猫站在桌边，爪子搭在杯子上，杯子晃了一下，整杯水倒在键盘上。镜头猛地一抖，然后切到主人的视角——一只手冲过去把猫抱走，另一只手疯狂抽纸巾。猫全程一脸无辜，还回头看了一眼被泡的键盘。",cap:"家人们谁懂啊 我的键盘 #猫 #翻车现场",th:"看着就心疼。那把键盘……算了，不说了。"},
+home3:{av:"#74b9ff",c:"港",d:"香港夜景延时。从傍晚六点拍到凌晨两点，中环的楼一栋栋亮起来又暗下去，维港的船一趟趟开过去。镜头最后停在某一栋居民楼上，只有那一户的灯一直亮着。配乐是钢琴，很轻。",cap:"香港 凌晨两点 #香港夜景 #延时摄影",th:"亮着的那户……跟我一样。总是最后一个关灯。"},
+home4:{av:"#e17055",c:"码",d:"一个戴眼镜的男生坐在三台显示器前，屏幕上全是代码。他敲了两下，停下来，盯着屏幕看了十秒，然后整段删掉重写。旁边放着一杯早就凉透的咖啡。他喝了一口，皱眉，还是喝完了。镜头拉远，窗外天已经亮了。",cap:"通宵改bug 改到最后发现是少了个分号 #程序员 #通宵",th:"少个分号。我上周也干过一次。这种事只能自己笑。"},
+home5:{av:"#00b894",c:"咖",d:"手冲咖啡的全过程。磨豆、温杯、注水，水柱很细，画着圈往下走。咖啡粉鼓起来的时候镜头推近了，能看到气泡一个个破掉。最后倒进杯子里，颜色是很浅的琥珀色。全程没有说话，只有水声。",cap:"手冲 耶加雪菲 #手冲咖啡 #慢生活",th:"她给我买的那包也是耶加雪菲。我到现在还没舍得喝完。"},
+home6:{av:"#fd79a8",c:"兔",d:"一只白色的垂耳兔蹲在垫子上啃草，腮帮子一动一动的。镜头拍得很近，能看到胡须。它啃了两口，突然抬起头看镜头，耳朵动了一下，然后又低下头继续啃。画面右下角有一只人的手伸进来，摸了摸它的头。",cap:"养兔子的第37天 #兔子 #宠物日常",th:"……她要是看到这个，肯定又要说想养。不行。"},
+fri1:{av:"#5b7fa6",c:"K",d:"茶餐厅里，桌面上摆着菠萝油、冻柠茶、还有一碟咖喱鱼蛋。镜头对面坐着一个人，只拍到肩膀和手，手一直在转杯子。Ken 的声音在画外说：「佢而家连酒都唔饮。」镜头晃了一下，拍到窗外。",cap:"旧同学聚会 少咗一个人 #茶餐厅",th:"……又拍我。下次删他好友。",mutual:1},
+fri2:{av:"#a65b7f",c:"杰",d:"办公室的三台显示器，全是行情曲线。一只手在键盘上敲了几下，屏幕上的数字跳了一下。镜头转向旁边的泡面箱，箱子上贴着便利贴，写着「别动」。画外音：「小祁的，谁动谁死。」",cap:"我们组最卷的男人 #办公室日常",th:"……那箱面是给她留的。别动。",mutual:1},
+fri3:{av:"#7a9a5b",c:"晴",d:"学校走廊，午休时间。镜头对着一个女生的背影，她坐在窗边看书，阳光打在头发上。镜头慢慢拉近，然后突然被她发现，她回过头瞪了一眼，伸手挡住镜头。画面黑了。",cap:"我们学校最好看的学姐 #校园",th:"这丫头。别乱拍别人。",mutual:1},
+fri4:{av:"#c9a227",c:"陈",d:"深夜里的一台笔记本，屏幕上跑着模型训练的日志，一行行往上滚。旁边是一杯黑咖啡和一个空的烟盒。镜头晃过窗外的香港，天还没亮。画外音：「跑通了。」然后就没了。",cap:"第41天 #量化 #深夜",th:"……41天。他比我能熬。",mutual:1},
+work1:{av:"#3a3a3e",c:"砚",d:"一张书桌的俯拍。台灯只开了一盏，光打在键盘上。屏幕上是一段写了一半的代码，光标在闪。右下角放着一个马克杯，杯子里还有一点凉掉的咖啡。镜头静止了十几秒，只有光标在闪。",cap:"三点。 #深夜 #代码",th:"我拍的。拍的时候没想什么，就是想记一下这个时间点。",me:1},
+work2:{av:"#3a3a3e",c:"砚",d:"一把白色键盘的特写。键帽是新的，灯光斜着打过来，能看到键帽表面的细微纹理。镜头缓慢地推近，最后停在空格键上——上面有一道很浅的划痕。",cap:"换了。 #键盘",th:"划痕是之前那把留下的。她按的。我没擦。",me:1},
+work3:{av:"#3a3a3e",c:"砚",d:"显示器上的代码，滚动得很慢。是一段优化过的算法，注释写得很干净。镜头拉远，能看到整个屏幕，然后画面右下角出现了一只手的影子，把光标移到最上面一行，停住了。",cap:"跑通了。 #代码 #量化",th:"跑通的时候是凌晨四点。想找人说，但是没发。",me:1},
+work4:{av:"#3a3a3e",c:"砚",d:"一杯手冲咖啡，滤杯还在滴水。光线从侧面来，能看到杯口的热气。桌面上放着一小袋咖啡豆，包装上印着产地。镜头停了三秒，然后一只手伸进来，把杯子端走了。",cap:"。",th:"她送的豆子。我拍了，没@她。她应该会刷到。",me:1},
+work5:{av:"#3a3a3e",c:"砚",d:"一只白色的兔子玩偶被放在椅子上，四十厘米，摆得很正，脸朝着镜头。背景是普通房间，光线偏暗。画面里没有任何人，也没有声音。镜头就这么拍了二十秒。",cap:"",th:"不是我的。放这儿而已。……别问。",me:1},
+work6:{av:"#3a3a3e",c:"砚",d:"窗外的雨。玻璃上全是水痕，把楼和天糊成一片灰蓝。窗台上放着一把折叠伞，伞是干的。镜头偶尔会被水痕挡住，然后慢慢清晰。远处有一栋楼的灯亮着。",cap:"香港的雨。",th:"拍的时候在想，她带伞了没有。",me:1},
+fav1:{av:"#0984e3",c:"键",d:"键盘评测。博主拆开键帽，展示轴体的结构，一边拆一边讲手感。镜头切换到打字测试，声音很轻。最后他总结说，这把适合深夜用，不吵到人。",cap:"静电容键盘深度评测 深夜码农的救星 #键盘",th:"收藏了。买之前看了三遍。"},
+fav2:{av:"#00b894",c:"香",d:"香薰蜡烛的制作过程。融蜡、加精油、倒模、插芯，全程慢镜头。最后点燃，火焰很小，烟很细。博主说雪松的味道能让人静下来。",cap:"在家做一支雪松香薰 #香薰 #手作",th:"她说睡不好。我查了很多，最后买了现成的。这个收藏着，以后可以自己做。"},
+fav3:{av:"#e17055",c:"拍",d:"拍立得的使用技巧。怎么调光、怎么等显影、怎么保存。博主拿出一叠照片，每一张都是不同的人。最后一张是一个女生的背影。",cap:"拍立得入门 5个小技巧 #拍立得 #摄影",th:"买了相机，还没用。想拍的人不肯让我拍。"},
+fav4:{av:"#6c5ce7",c:"眠",d:"雨声白噪音，一小时。画面是窗外的雨，没有任何人。评论区全是「睡了」「有用」「收藏了」。",cap:"雨声白噪音 助眠 #助眠 #白噪音",th:"她写作业要开白噪音。这个存着，她来的时候放。"},
+fav5:{av:"#fd79a8",c:"兔",d:"养兔科普。讲兔子不能吃的东西、需要多大的笼子、每天要放风多久。博主说，养之前先想清楚，兔子能活八年。",cap:"养兔前必看 这些你一定要知道 #兔子",th:"……八年。收藏了。等她真的想清楚再说。"},
+fav6:{av:"#c9a227",c:"咖",d:"香港的小众咖啡店探店。店面很小，只有四个座位，老板自己烘豆。镜头拍了菜单、吧台、还有窗外的一条窄巷。",cap:"香港6家小众咖啡店 #香港 #咖啡",th:"这家离她学校很近。下次可以带她去。"},
+like1:{av:"#ff7675",c:"猫",d:"猫在纸箱里睡午觉，翻了个身，露出肚皮。镜头推近，它打了个哈欠。",cap:"猫的一天 #猫",th:"……随手点了个赞。"},
+like2:{av:"#e17055",c:"食",d:"深夜食堂，老板在煎蛋，油花溅起来。客人一个人坐着，低头吃饭。",cap:"深夜食堂 #美食",th:"看着还行。下次带她去。"},
+like3:{av:"#0984e3",c:"码",d:"程序员讲一个算法优化，从 O(n²) 讲到 O(n log n)，画了图。讲得很清楚。",cap:"三分钟讲明白归并排序 #算法",th:"讲得不错。点了。"},
+like4:{av:"#fd79a8",c:"情",d:"一对情侣在便利店买东西，男生一直在看女生挑零食，女生挑了很久，男生就站着等，一句话没说。最后女生拿了两包，男生付钱。",cap:"他从来不催我 #情侣日常",th:"……" },
+like5:{av:"#74b9ff",c:"雨",d:"雨天的窗户，水痕一直往下流。镜头对着窗外，一动不动拍了三十秒。",cap:"下雨天 #雨天",th:"她也喜欢拍这种。"},
+like6:{av:"#a29bfe",c:"字",d:"手写字的视频，笔尖在纸上走，写的是「今天也要好好的」。字很好看。",cap:"手写 #字 #治愈",th:"……一般。她写得比这个丑。"}
+};
+var CM={
+home1:'<div class="cm"><div class="ca" style="background:#5c89fe">手</div><div class="cb"><div class="cn">手抖的鱼</div><div class="ct">这个点还在便利店的人都是有故事的</div><div class="cd">2小时前 · 广东</div></div></div><div class="cm"><div class="ca" style="background:#e17055">夜</div><div class="cb"><div class="cn">夜猫子本猫</div><div class="ct">我也经常一个人吃关东煮 习惯了</div><div class="cd">1小时前 · 香港</div></div></div><div class="cm"><div class="ca" style="background:#00b894">暖</div><div class="cb"><div class="cn">暖暖</div><div class="ct">看哭了 想起高中的自己</div><div class="cd">45分钟前 · 上海</div><div class="rep"><div class="cm"><div class="ca" style="background:#a29bfe">楼</div><div class="cb"><div class="cn">楼上是我</div><div class="ct">抱抱</div><div class="cd">30分钟前</div></div></div></div></div></div>',
+home2:'<div class="cm"><div class="ca" style="background:#e17055">键</div><div class="cb"><div class="cn">键盘侠</div><div class="ct">心疼键盘 这个最少一千</div><div class="cd">3小时前 · 北京</div></div></div><div class="cm"><div class="ca" style="background:#fd79a8">猫</div><div class="cb"><div class="cn">猫奴一号</div><div class="ct">猫：关我什么事</div><div class="cd">2小时前 · 四川</div></div></div><div class="cm"><div class="ca" style="background:#0984e3">路</div><div class="cb"><div class="cn">路人甲</div><div class="ct">哈哈哈哈哈哈笑死</div><div class="cd">1小时前 · 广东</div></div></div>',
+home3:'<div class="cm"><div class="ca" style="background:#74b9ff">港</div><div class="cb"><div class="cn">港岛旧人</div><div class="ct">住香港十几年 还是第一次看这么拍的</div><div class="cd">5小时前 · 香港</div></div></div><div class="cm"><div class="ca" style="background:#a29bfe">夜</div><div class="cb"><div class="cn">夜行</div><div class="ct">那盏灯是谁家</div><div class="cd">4小时前 · 深圳</div><div class="rep"><div class="cm"><div class="ca" style="background:#74b9ff">港</div><div class="cb"><div class="cn">港岛旧人</div><div class="ct">不知道 但感觉很孤独</div><div class="cd">3小时前</div></div></div></div></div>',
+home4:'<div class="cm"><div class="ca" style="background:#e17055">码</div><div class="cb"><div class="cn">秃头预备役</div><div class="ct">少个分号这个我熟</div><div class="cd">6小时前 · 杭州</div></div></div><div class="cm"><div class="ca" style="background:#0984e3">前</div><div class="cb"><div class="cn">前端仔</div><div class="ct">三台显示器 羡慕了</div><div class="cd">5小时前 · 北京</div></div></div><div class="cm"><div class="ca" style="background:#00b894">卷</div><div class="cb"><div class="cn">不卷了</div><div class="ct">别学了 保命要紧</div><div class="cd">3小时前 · 上海</div></div></div>',
+home5:'<div class="cm"><div class="ca" style="background:#00b894">咖</div><div class="cb"><div class="cn">豆子控</div><div class="ct">水柱太稳了 手很稳</div><div class="cd">4小时前 · 云南</div></div></div><div class="cm"><div class="ca" style="background:#c9a227">慢</div><div class="cb"><div class="cn">慢下来</div><div class="ct">看这个视频的时候心静下来了</div><div class="cd">2小时前 · 成都</div></div></div><div class="cm"><div class="ca" style="background:#e17055">穷</div><div class="cb"><div class="cn">穷鬼</div><div class="ct">耶加雪菲 一斤够我吃三天饭</div><div class="cd">1小时前 · 广州</div></div></div>',
+home6:'<div class="cm"><div class="ca" style="background:#fd79a8">兔</div><div class="cb"><div class="cn">兔妈</div><div class="ct">垂耳兔太乖了吧</div><div class="cd">3小时前 · 江苏</div></div></div><div class="cm"><div class="ca" style="background:#a29bfe">想</div><div class="cb"><div class="cn">想养兔子</div><div class="ct">好想养 但是我妈不让</div><div class="cd">2小时前 · 广东</div></div></div><div class="cm"><div class="ca" style="background:#5b7fa6">冷</div><div class="cb"><div class="cn">冷静一下</div><div class="ct">养之前想清楚 能活八年</div><div class="cd">1小时前 · 北京</div></div></div>',
+fri1:'<div class="cm"><div class="ca" style="background:#a65b7f">杰</div><div class="cb"><div class="cn">阿杰</div><div class="ct">哈哈哈哈哈你又发他</div><div class="cd">1小时前</div></div></div><div class="cm"><div class="ca" style="background:#7a9a5b">晴</div><div class="cb"><div class="cn">表妹 阿晴</div><div class="ct">我哥呢 我哥怎么不出现</div><div class="cd">1小时前</div></div></div><div class="cm"><div class="ca" style="background:#c9a227">陈</div><div class="cb"><div class="cn">陈工</div><div class="ct">他最近是变了</div><div class="cd">50分钟前</div></div></div>',
+fri2:'<div class="cm"><div class="ca" style="background:#5b7fa6">K</div><div class="cb"><div class="cn">Ken</div><div class="ct">别动 哈哈哈哈</div><div class="cd">2小时前</div></div></div><div class="cm"><div class="ca" style="background:#7a9a5b">晴</div><div class="cb"><div class="cn">表妹 阿晴</div><div class="ct">便利贴是他写的吧 字好丑</div><div class="cd">1小时前</div></div></div><div class="cm"><div class="ca" style="background:#a65b7f">杰</div><div class="cb"><div class="cn">阿杰</div><div class="ct">是他写的 我作证</div><div class="cd">1小时前</div></div></div>',
+fri3:'<div class="cm"><div class="ca" style="background:#a65b7f">杰</div><div class="cb"><div class="cn">阿杰</div><div class="ct">这是谁</div><div class="cd">3小时前</div></div></div><div class="cm"><div class="ca" style="background:#5b7fa6">K</div><div class="cb"><div class="cn">Ken</div><div class="ct">拍得不错</div><div class="cd">2小时前</div></div></div><div class="cm"><div class="ca" style="background:#3a3a3e">砚</div><div class="cb"><div class="cn">祁砚</div><div class="ct">删掉</div><div class="cd">1小时前</div><div class="rep"><div class="cm"><div class="ca" style="background:#7a9a5b">晴</div><div class="cb"><div class="cn">表妹 阿晴</div><div class="ct">不要</div><div class="cd">1小时前</div></div></div></div></div>',
+fri4:'<div class="cm"><div class="ca" style="background:#3a3a3e">砚</div><div class="cb"><div class="cn">祁砚</div><div class="ct">41天。</div><div class="cd">5小时前</div></div></div><div class="cm"><div class="ca" style="background:#a65b7f">杰</div><div class="cb"><div class="cn">阿杰</div><div class="ct">你们两个都疯了</div><div class="cd">4小时前</div></div></div>',
+detail:'<div class="cm"><div class="ca" style="background:#5c89fe">网</div><div class="cb"><div class="cn">夜行动物</div><div class="ct">这个点还在发视频的人 都没睡吧</div><div class="cd">2小时前 · 香港</div></div></div><div class="cm"><div class="ca" style="background:#e17055">路</div><div class="cb"><div class="cn">路过</div><div class="ct">拍得挺好看的</div><div class="cd">1小时前 · 广东</div></div></div><div class="cm"><div class="ca" style="background:#00b894">同</div><div class="cb"><div class="cn">同类</div><div class="ct">我也总是最后一个关灯</div><div class="cd">40分钟前 · 上海</div></div></div>'
+};
+var CHAT={
+0:'<div class="cr"><div class="ca" style="background:#e8a0b4">咩</div><div class="cb cl">哥哥</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">在</div></div><div class="cr"><div class="ca" style="background:#e8a0b4">咩</div><div class="cb cl">你还没睡啊</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">你不也没睡</div></div><div class="cr"><div class="ca" style="background:#e8a0b4">咩</div><div class="cb cl">我刷到你的视频了</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">哪个</div></div><div class="cr"><div class="ca" style="background:#e8a0b4">咩</div><div class="cb cl">那把键盘的</div></div><div class="cr"><div class="ca" style="background:#e8a0b4">咩</div><div class="cb cl">你为什么有两把</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">备用</div></div><div class="cr"><div class="ca" style="background:#e8a0b4">咩</div><div class="cb cl">骗人</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">睡觉</div></div><div class="cr"><div class="ca" style="background:#e8a0b4">咩</div><div class="cb cl">晚安哥哥</div></div>',
+1:'<div class="cr"><div class="ca" style="background:#5b7fa6">K</div><div class="cb cl">喂 你几时返香港</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">下个月</div></div><div class="cr"><div class="ca" style="background:#5b7fa6">K</div><div class="cb cl">带女朋友出嚟见下啦</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">唔使</div></div><div class="cr"><div class="ca" style="background:#5b7fa6">K</div><div class="cb cl">你以前唔系咁</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">以前系以前</div></div><div class="cr"><div class="ca" style="background:#5b7fa6">K</div><div class="cb cl">痴线</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">嗯</div></div>',
+2:'<div class="cr"><div class="ca" style="background:#a65b7f">杰</div><div class="cb cl">哥 明天开会你来吗</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">来</div></div><div class="cr"><div class="ca" style="background:#a65b7f">杰</div><div class="cb cl">领导说想让你讲一下架构</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">不讲</div></div><div class="cr"><div class="ca" style="background:#a65b7f">杰</div><div class="cb cl">为什么</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">麻烦</div></div><div class="cr"><div class="ca" style="background:#a65b7f">杰</div><div class="cb cl">那我怎么回</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">你说我忙</div></div>',
+3:'<div class="cr"><div class="ca" style="background:#8a8a8e">快</div><div class="cb cl">【顺丰】您的快件已放置于门口，签收码 8842</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">好</div></div><div class="cr"><div class="ca" style="background:#8a8a8e">快</div><div class="cb cl">老板 这个月你收了 17 个包裹</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">嗯</div></div><div class="cr"><div class="ca" style="background:#8a8a8e">快</div><div class="cb cl">都是送人的吧</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">关你事？</div></div><div class="cr"><div class="ca" style="background:#8a8a8e">快</div><div class="cb cl">哈哈哈 不是不是</div></div>',
+4:'<div class="cr"><div class="ca" style="background:#c9a227">陈</div><div class="cb cl">小祁 模型跑通了</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">嗯</div></div><div class="cr"><div class="ca" style="background:#c9a227">陈</div><div class="cb cl">你这版优化了多少</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">三成</div></div><div class="cr"><div class="ca" style="background:#c9a227">陈</div><div class="cb cl">可以啊</div></div><div class="cr"><div class="ca" style="background:#c9a227">陈</div><div class="cb cl">对了 你最近怎么都不加班了</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">有事</div></div><div class="cr"><div class="ca" style="background:#c9a227">陈</div><div class="cb cl">懂了 恭喜</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">多谢</div></div>',
+5:'<div class="cr"><div class="ca" style="background:#7a9a5b">晴</div><div class="cb cl">哥</div></div><div class="cr"><div class="ca" style="background:#7a9a5b">晴</div><div class="cb cl">哥你女朋友是不是很漂亮</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">关你咩事</div></div><div class="cr"><div class="ca" style="background:#7a9a5b">晴</div><div class="cb cl">好奇嘛</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">一般</div></div><div class="cr"><div class="ca" style="background:#7a9a5b">晴</div><div class="cb cl">一般你天天提</div></div><div class="cr r"><div class="ca" style="background:#333">砚</div><div class="cb crt">我冇提</div></div><div class="cr"><div class="ca" style="background:#7a9a5b">晴</div><div class="cb cl">你朋友圈发过佢只手</div></div>'
+};
+var MSG=[
+{n:"小咩",a:"咩",c:"#e8a0b4",p:"晚安哥哥",t:"23:41",ch:0},
+{n:"Ken",a:"K",c:"#5b7fa6",p:"你几时返香港",t:"22:10",ch:1},
+{n:"阿杰",a:"杰",c:"#a65b7f",p:"领导说想让你讲一下架构",t:"21:05",ch:2},
+{n:"顺丰快递",a:"快",c:"#8a8a8e",p:"您的快件已放置于门口",t:"19:30",ch:3},
+{n:"陈工",a:"陈",c:"#c9a227",p:"模型跑通了",t:"昨天",ch:4},
+{n:"表妹 阿晴",a:"晴",c:"#7a9a5b",p:"哥你女朋友是不是很漂亮",t:"昨天",ch:5}
+];
+var TAGS=["静电容键盘 声音小","香港 深夜外卖","拍立得 相纸","助眠香薰","兔子玩偶 60cm","失眠怎么办","女生生日送什么","量化 入门","香港 天气","手冲咖啡 教程"];
+var page=0;
+function vcard(k){
+  var v=V[k];
+  var mut=v.mutual?'<div class="mt">互相关注</div>':'';
+  return '<div class="vc"><div class="vbg"></div><div class="vtxt">[视频画面描述]<br><br>'+v.d+'</div>'+
+  '<div class="rail">'+
+   '<div class="av" style="background:'+v.av+'">'+v.c+'<div class="p"></div></div>'+
+   '<div class="act" onclick="lk(this)"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span class="n">'+(1200+Math.floor(Math.random()*40000))+'</span></div>'+
+   '<div class="act" onclick="openCm(\''+k+'\')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span class="n">'+(80+Math.floor(Math.random()*900))+'</span></div>'+
+   '<div class="act" onclick="st(this)"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span class="n">'+(300+Math.floor(Math.random()*6000))+'</span></div>'+
+   '<div class="act think" onclick="showTh(\''+k+'\')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span class="n">想法</span></div>'+
+   '<div class="act"><svg viewBox="0 0 24 24"><path d="M20.5 11.5l-8-8v4.5C5 8.5 3 14 3 20c2.5-3.5 6-4.5 9.5-4.5v4.5l8-8.5z"/></svg><span class="n">分享</span></div>'+
+   '<div class="disc"><div style="background:'+v.av+'">'+v.c+'</div></div>'+
+  '</div>'+
+  '<div class="vinfo">'+mut+'<div class="au">@'+({home:["深夜食堂","喵星观察","港岛镜头","码农日记","手冲日常","兔子频道"][parseInt(k.slice(4))-1]||"祁砚",fri:["Ken","阿杰","阿晴","陈工"][parseInt(k.slice(3))-1]||"祁砚",work:"祁砚",fav:["键盘研究所","手作香薰","拍立得小课堂","助眠电台","兔兔百科","香港探店"][parseInt(k.slice(3))-1]||"博主",like:["喵","深夜食客","算法笔记","日常","雨天","手写"][parseInt(k.slice(4))-1]||"博主"}[k.slice(0,4)]||"博主")+'</div><div class="de">'+v.cap+'</div><div class="mu">♪ 原声</div></div></div>';
+}
+function lk(e){e.classList.toggle('liked')}
+function st(e){e.classList.toggle('star')}
+function showTh(k){document.getElementById('thBox').textContent=V[k].th;document.getElementById('pTh').classList.add('on')}
+function closeTh(){document.getElementById('pTh').classList.remove('on')}
+function openCm(k){document.getElementById('cmBox').innerHTML=CM[k]||CM.detail;document.getElementById('pCm').classList.add('on')}
+function closeCm(){document.getElementById('pCm').classList.remove('on')}
+function buildFeed(){
+  var h='';for(var i=1;i<=6;i++)h+=vcard('home'+i);
+  document.getElementById('feed').innerHTML=h;
+  var h2='';for(var j=1;j<=4;j++)h2+=vcard('fri'+j);
+  document.getElementById('fFeed').innerHTML=h2;
+}
+function buildMsg(){
+  document.getElementById('msgList').innerHTML=MSG.map(function(m,i){
+    return '<div class="mi" onclick="openChat('+i+')"><div class="ma" style="background:'+m.c+'">'+m.a+'</div><div class="mb"><div class="mn">'+m.n+'</div><div class="mp">'+m.p+'</div></div><div class="mt">'+m.t+'</div></div>';
+  }).join('');
+}
+function openChat(i){
+  var m=MSG[i];
+  document.getElementById('msgList').innerHTML='<div class="mh"><span class="l" onclick="buildMsg()">‹</span>'+m.n+'</div><div class="chat">'+CHAT[m.ch]+'</div>';
+}
+function buildMe(){
+  document.getElementById('meBox').innerHTML=
+  '<div class="mebg" id="meBg"><div class="meu"><div class="av" id="meAv">砚</div><div><div class="nm" id="meNm">祁砚</div><div class="id" id="meId">抖音号：qiyan_kai</div></div></div></div>'+
+  '<div class="mcard"><div class="stats"><div class="g"><div class="s"><b>6.2万</b><span>获赞</span></div><div class="s"><b>128</b><span>互关</span></div><div class="s"><b>256</b><span>关注</span></div><div class="s"><b>6.1万</b><span>粉丝</span></div></div><div class="ed" onclick="openEdit()">编辑主页</div></div>'+
+  '<div class="bio" id="meBio">不常说话。\n写代码，偶尔拍点东西。\n凌晨三点在线是常态。</div>'+
+  '<div class="ctabs"><div class="on" onclick="tab(0,this)">作品</div><div onclick="tab(1,this)">收藏</div><div onclick="tab(2,this)">喜欢</div></div>'+
+  '<div class="vg on" id="gWork">'+[1,2,3,4,5,6].map(function(i){return '<div class="vi" style="background:'+V['work'+i].av+'" onclick="openOne(\'work'+i+'\')">'+V['work'+i].c+'</div>'}).join('')+'</div>'+
+  '<div class="vg" id="gFav">'+[1,2,3,4,5,6].map(function(i){return '<div class="vi" onclick="openOne(\'fav'+i+'\')">'+V['fav'+i].c+'</div>'}).join('')+'</div>'+
+  '<div class="vg" id="gLike">'+[1,2,3,4,5,6].map(function(i){return '<div class="vi" onclick="openOne(\'like'+i+'\')">'+V['like'+i].c+'</div>'}).join('')+'</div>'+
+  '</div>';
+}
+function tab(i,el){
+  document.querySelectorAll('.ctabs div').forEach(function(d){d.classList.remove('on')});el.classList.add('on');
+  ['gWork','gFav','gLike'].forEach(function(id,k){document.getElementById(id).classList.toggle('on',k==i)});
+}
+function openOne(k){
+  document.getElementById('feed').innerHTML=vcard(k);
+  go(0);
+}
+function go(i){
+  page=i;
+  var ids=['pHome','pFri','pMsg','pMe'];
+  ids.forEach(function(id,k){document.getElementById(id).classList.toggle('on',k==(i==2?0:i))});
+  document.querySelectorAll('.tab').forEach(function(t,k){t.classList.toggle('on',k==i)});
+  var dark=(i==0||i==1);
+  document.getElementById('tabbar').classList.toggle('light',!dark);
+  if(i==3){buildMsg();document.getElementById('pMsg').classList.add('on');document.getElementById('pHome').classList.remove('on')}
+  if(i==4){buildMe();document.getElementById('pMe').classList.add('on');document.getElementById('pHome').classList.remove('on')}
+  if(i==0){buildFeed();document.getElementById('pHome').classList.add('on');document.getElementById('pMsg').classList.remove('on');document.getElementById('pMe').classList.remove('on')}
+  if(i==1){document.getElementById('pFri').classList.add('on');document.getElementById('pMsg').classList.remove('on');document.getElementById('pMe').classList.remove('on')}
+}
+function openSearch(){document.getElementById('tagBox').innerHTML=TAGS.map(function(t){return '<span>'+t+'</span>'}).join('');document.getElementById('pSearch').classList.add('on')}
+function closeSearch(){document.getElementById('pSearch').classList.remove('on')}
+function openEdit(){
+  document.getElementById('iBio').value=document.getElementById('meBio').textContent;
+  document.getElementById('pEdit').classList.add('on');
+}
+function closeEdit(){document.getElementById('pEdit').classList.remove('on')}
+function pick(el,type){
+  var f=el.querySelector('input').files[0];if(!f)return;
+  var u=URL.createObjectURL(f);
+  if(type=='bg'){el.style.backgroundImage='url('+u+')';el.childNodes[0].nodeValue='';}
+  else{el.style.backgroundImage='url('+u+')';el.childNodes[0].nodeValue='';}
+}
+function saveEdit(){
+  var nm=document.getElementById('iNm').value,id=document.getElementById('iId').value,bio=document.getElementById('iBio').value;
+  document.getElementById('meNm').textContent=nm;
+  document.getElementById('meId').textContent='抖音号：'+id;
+  document.getElementById('meBio').textContent=bio;
+  var av=document.getElementById('eAv'),bg=document.getElementById('eBg');
+  if(av.style.backgroundImage){document.getElementById('meAv').style.backgroundImage=av.style.backgroundImage;document.getElementById('meAv').textContent=''}
+  if(bg.style.backgroundImage)document.getElementById('meBg').style.backgroundImage=bg.style.backgroundImage;
+  closeEdit();
+}
+buildFeed();buildMsg();
+</script></body></html>
