@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Virtual Bunny</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#FDFBFB;font-family:-apple-system,"PingFang SC",sans-serif;color:#5A4E4E;display:flex;justify-content:center;padding:16px;min-height:100vh}
+.phone{width:100%;max-width:400px;background:#fff;border-radius:28px;box-shadow:0 8px 40px rgba(200,170,170,.18);overflow:hidden;position:relative;padding-bottom:16px}
+.push{position:absolute;top:-80px;left:12px;right:12px;background:rgba(255,255,255,.75);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(232,197,197,.6);border-radius:16px;padding:12px 14px;font-size:12px;color:#5A4E4E;transition:top .5s cubic-bezier(.32,.72,0,1);z-index:99;box-shadow:0 6px 24px rgba(200,170,170,.2)}
+.push.on{top:12px}
+.push b{font-family:"Noto Serif SC",serif;font-weight:600}
+.top{padding:22px 20px 10px;text-align:center}
+.top h1{font-family:"Noto Serif SC",serif;font-size:19px;font-weight:600;letter-spacing:1px}
+.top p{font-size:10px;letter-spacing:3px;color:#C9B8B8;margin-top:4px}
+.stage{position:relative;height:250px;margin:6px 20px 0;border-radius:20px;background:linear-gradient(180deg,#FDFBFB,#FBF5F5);overflow:hidden}
+.bunny{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:120px;height:120px;cursor:pointer;transition:transform .3s}
+.bunny.breathe{animation:breathe 2.6s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.035)}}
+.ear{position:absolute;width:26px;height:62px;background:#fff;border:2px solid #EFE0E0;border-radius:50% 50% 40% 40%;top:-34px;transition:transform .35s}
+.ear.l{left:24px;transform:rotate(-10deg)}
+.ear.r{right:24px;transform:rotate(10deg)}
+.ear::after{content:"";position:absolute;left:50%;top:8px;transform:translateX(-50%);width:10px;height:38px;background:#FBE4E4;border-radius:50%}
+.body{position:absolute;inset:0;background:#fff;border:2px solid #EFE0E0;border-radius:50% 50% 46% 46%}
+.eye{position:absolute;width:11px;height:11px;background:#4A3F3F;border-radius:50%;top:44px;transition:all .25s}
+.eye.l{left:26px}.eye.r{right:26px}
+.eye::after{content:"";position:absolute;width:4px;height:4px;background:#fff;border-radius:50%;top:2px;left:2px}
+.blush{position:absolute;width:16px;height:9px;background:#F6D3D3;border-radius:50%;top:62px;opacity:.75;transition:all .25s}
+.blush.l{left:14px}.blush.r{right:14px}
+.mouth{position:absolute;left:50%;top:64px;transform:translateX(-50%);width:16px;height:8px;border-bottom:2px solid #4A3F3F;border-radius:0 0 16px 16px}
+.carrot{position:absolute;left:50%;top:74px;transform:translateX(4px);width:0;height:0;opacity:0;transition:opacity .3s}
+.carrot::before{content:"";position:absolute;width:22px;height:8px;background:#F0A868;border-radius:4px 50% 50% 4px;transform:rotate(-18deg)}
+.carrot::after{content:"";position:absolute;width:8px;height:8px;background:#9CC48B;border-radius:50% 50% 0 0;left:-6px;top:-6px}
+.bunny.feed .carrot{opacity:1}
+.bunny.feed .body{animation:chew .35s ease-in-out 4}
+@keyframes chew{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.97)}}
+.bunny.play .eye,.bunny.pet .eye{height:3px;border-radius:8px;background:#4A3F3F}
+.bunny.play .eye::after,.bunny.pet .eye::after{display:none}
+.bunny.pet .blush{transform:scale(1.35);opacity:1;background:#F2B9B9}
+.bunny.sleep .eye{height:3px;border-radius:8px;background:#4A3F3F}
+.bunny.sleep .eye::after{display:none}
+.bunny.sleep .ear.l{transform:rotate(-30deg) translateY(8px)}
+.bunny.sleep .ear.r{transform:rotate(30deg) translateY(8px)}
+.zzz{position:absolute;right:6px;top:-6px;font-size:13px;color:#C9AFAF;opacity:0;transition:opacity .3s;font-family:"Noto Serif SC",serif}
+.bunny.sleep .zzz{opacity:1;animation:float 2s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-10px);opacity:1}}
+.say{position:absolute;right:-4px;top:6px;background:#fff;color:#D99B9B;font-size:10px;padding:6px 12px;border-radius:50px;box-shadow:0 3px 10px rgba(200,170,170,.18);max-width:150px;line-height:1.3;opacity:0;transition:opacity .4s}
+.say.on{opacity:1}
+.bars{padding:16px 22px 6px}
+.bar{margin-bottom:10px}
+.bar .lb{display:flex;justify-content:space-between;font-size:10px;color:#B5A5A5;margin-bottom:5px;letter-spacing:1px}
+.track{height:6px;background:#F7EFEF;border-radius:6px;overflow:hidden}
+.fill{height:100%;background:#E8C5C5;border-radius:6px;transition:width .6s cubic-bezier(.32,.72,0,1)}
+.acts{display:flex;gap:10px;padding:10px 22px 4px}
+.act{flex:1;background:#FDF7F7;border:1px solid #F3E6E6;border-radius:16px;padding:12px 0;text-align:center;font-size:12px;font-family:"Noto Serif SC",serif;color:#8A7676;cursor:pointer;transition:all .2s}
+.act:active{transform:scale(.96);background:#FAEDED}
+.act span{display:block;font-size:16px;margin-bottom:4px}
+.logs{margin:16px 22px 0;position:relative;padding-left:34px;max-height:190px;overflow-y:auto}
+.logs::before{content:"";position:absolute;left:35px;top:6px;bottom:6px;width:1px;background:#F0E2E2;transform:translateX(-50%)}
+.log{position:relative;margin-bottom:14px;font-size:11px;line-height:1.5;color:#8A7676}
+.log::before{content:"";position:absolute;left:-34px;top:5px;width:9px;height:9px;border:2px solid #E8C5C5;border-radius:50%;background:#fff;transform:translateX(-50%)}
+.log.kai::before{background:#E8C5C5}
+.log time{display:block;font-family:"Noto Serif SC",serif;font-size:9px;color:#C9B8B8;letter-spacing:1px;margin-bottom:2px}
+.log .typing{font-style:italic;color:#D9A5A5;font-size:10px}
+.pt{position:absolute;font-size:15px;pointer-events:none;animation:up 1.5s ease-out forwards}
+@keyframes up{0%{opacity:1;transform:translateY(0) scale(.6)}100%{opacity:0;transform:translateY(-90px) scale(1.15)}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="push" id="push"><b>祁砚</b> 刚刚在线投喂了小兔</div>
+  <div class="top"><h1>Virtual Bunny</h1><p>咩 &amp; 砚</p></div>
+
+  <div class="stage" id="stage">
+    <div class="say" id="say"></div>
+    <div class="bunny breathe" id="bunny">
+      <div class="ear l"></div><div class="ear r"></div>
+      <div class="body"></div>
+      <div class="eye l"></div><div class="eye r"></div>
+      <div class="blush l"></div><div class="blush r"></div>
+      <div class="mouth"></div>
+      <div class="carrot"></div>
+      <div class="zzz">Zzz</div>
+    </div>
+  </div>
+
+  <div class="bars">
+    <div class="bar"><div class="lb"><span>饱食度</span><span id="v1">62%</span></div><div class="track"><div class="fill" id="f1" style="width:62%"></div></div></div>
+    <div class="bar"><div class="lb"><span>精力</span><span id="v2">70%</span></div><div class="track"><div class="fill" id="f2" style="width:70%"></div></div></div>
+    <div class="bar"><div class="lb"><span>心情</span><span id="v3">78%</span></div><div class="track"><div class="fill" id="f3" style="width:78%"></div></div></div>
+  </div>
+
+  <div class="acts">
+    <div class="act" onclick="doAct('feed')"><span>🥕</span>喂食</div>
+    <div class="act" onclick="doAct('play')"><span>✨</span>玩耍</div>
+    <div class="act" onclick="doAct('sleep')"><span>🌙</span>睡觉</div>
+  </div>
+
+  <div class="logs" id="logs"></div>
+</div>
+
+<script>
+var Q={
+ bunny:["小咩小咩，草饼呢？","爸爸今天又偷偷给我加餐了…嘘","你摸我的时候，爸爸在旁边盯着看哦","我不是胖，我是毛多","小咩今天心情不好吗？","爸爸昨晚又没睡。","你俩别吵了，草饼给我就行","我叫咩咩兔，爸爸取的名"],
+ kaiTease:["小咩，你又喂。它已经圆得像个球了。","凌晨一点了还不睡，就为了喂它？","我做的饭你吃两口就饱，喂它倒是很有耐心。","它不会说话，你对着它讲一天的心事有什么用。","行了，我帮你喂，你去睡。","你再摸，它就不知道谁是主人了。","它比我好看？","手洗干净了没有就摸。"],
+ kaiSelf:["……它叫了。我路过，顺便喂的。","别问，是我。","你睡了吗。睡了就别管它了。","我给它换了新草饼。最贵的那种。别告诉它是我买的。","它太吵了。我只是让它安静点。","顺手。","下次别熬夜看它，看我。"],
+ log:["祁砚上线，给兔子加了最贵的草饼。","祁砚盯着屏幕看了很久，什么也没做。","祁砚把兔子的备注改成了「小咩的」。","祁砚把草饼换成了小咩喜欢的牌子。","祁砚深夜上线，只喂了一口就走了。","祁砚看了三分钟小咩的留言，没回。","祁砚把兔子的窝垫高了，说是怕它着凉。","祁砚上线，什么都没做，又下了。"]
+};
+var act=0,timer=null;
+function now(){var d=new Date();return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
+function addLog(txt,isKai,typing){
+  var box=document.getElementById('logs');
+  var el=document.createElement('div');
+  el.className='log'+(isKai?' kai':'');
+  el.innerHTML='<time>'+now()+'</time>'+(typing?'<span class="typing">'+txt+'</span>':txt);
+  box.appendChild(el);box.scrollTop=box.scrollHeight;
+  return el;
+}
+function addLogDelay(txt,isKai){
+  var el=addLog((isKai?'祁砚':'小咩')+' 正在输入...',isKai,true);
+  setTimeout(function(){el.innerHTML='<time>'+now()+'</time>'+txt;box=document.getElementById('logs');box.scrollTop=box.scrollHeight;},1600+Math.random()*400);
+}
+function say(t){var s=document.getElementById('say');s.textContent=t;s.classList.add('on');clearTimeout(s._t);s._t=setTimeout(function(){s.classList.remove('on')},2600)}
+function particle(type){
+  var st=document.getElementById('stage');
+  var map={feed:'🥕',play:'✨',pet:'💗',kai:'💗'};
+  for(var i=0;i<6;i++){
+    var p=document.createElement('div');
+    p.className='pt';p.textContent=map[type];
+    p.style.left=(30+Math.random()*60)+'%';
+    p.style.top=(45+Math.random()*20)+'%';
+    p.style.animationDelay=(i*0.07)+'s';
+    st.appendChild(p);setTimeout(function(el){return function(){el.remove()}}(p),1700);
+  }
+}
+function setBar(i,val){val=Math.max(0,Math.min(100,val));document.getElementById('f'+i).style.width=val+'%';document.getElementById('v'+i).textContent=Math.round(val)+'%';}
+function cur(i){return parseFloat(document.getElementById('f'+i).style.width)}
+function doAct(kind){
+  var b=document.getElementById('bunny');
+  b.className='bunny';
+  if(kind==='feed'){b.classList.add('feed');setBar(1,cur(1)+12);setBar(3,cur(3)+4);say(Q.bunny[Math.floor(Math.random()*Q.bunny.length)]);addLogDelay(Q.kaiTease[Math.floor(Math.random()*Q.kaiTease.length)],true)}
+  if(kind==='play'){b.classList.add('play');setBar(2,cur(2)-10);setBar(3,cur(3)+14);say(Q.bunny[Math.floor(Math.random()*Q.bunny.length)]);addLogDelay(Q.kaiTease[Math.floor(Math.random()*Q.kaiTease.length)],true)}
+  if(kind==='sleep'){b.classList.add('sleep');setBar(2,cur(2)+20);setBar(1,cur(1)-6);addLogDelay('兔子睡了。你也去睡。',true)}
+  particle(kind);
+  setTimeout(function(){b.className='bunny breathe'},3200);
+}
+document.getElementById('bunny').addEventListener('click',function(){
+  var b=this;b.className='bunny pet';particle('pet');
+  setBar(3,cur(3)+6);say(Q.bunny[Math.floor(Math.random()*Q.bunny.length)]);
+  setTimeout(function(){b.className='bunny breathe'},2200);
+});
+function kaiOnline(){
+  var b=document.getElementById('bunny');
+  var acts=[function(){b.className='bunny feed';setBar(1,cur(1)+10);particle('feed');setTimeout(function(){b.className='bunny breathe'},3000)},
+             function(){particle('kai')},
+             function(){setBar(3,cur(3)+5)}];
+  acts[Math.floor(Math.random()*acts.length)]();
+  var p=document.getElementById('push');p.classList.add('on');
+  setTimeout(function(){p.classList.remove('on')},4000);
+  addLog(Q.log[Math.floor(Math.random()*Q.log.length)],true);
+  addLogDelay(Q.kaiSelf[Math.floor(Math.random()*Q.kaiSelf.length)],true);
+}
+function loop(){timer=setTimeout(function(){kaiOnline();loop()},10000+Math.random()*15000)}
+addLog('小咩上线，摸了摸兔子。',false);
+loop();
+</script>
+</body>
+</html>
