@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>主控终端</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050505">
+<style>
+:root{
+  --bg:#050505;
+  --surface:rgba(255,255,255,0.028);
+  --line:rgba(255,255,255,0.075);
+  --ink:#e8e6e4;
+  --dim:#6a6663;
+  --dimmer:#3a3735;
+  --red:#b03a3a;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{max-width:100%;overflow-x:hidden}
+body{
+  background:var(--bg);color:var(--ink);min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  display:flex;justify-content:center;
+}
+.app{width:100%;max-width:520px;padding:0 18px 70px;position:relative}
+
+/* 顶栏 */
+.top{
+  position:sticky;top:0;z-index:30;
+  background:rgba(5,5,5,.86);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  padding:16px 0 13px;margin-bottom:22px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.top h1{font-size:12px;font-weight:500;letter-spacing:5px;color:var(--ink)}
+.top .rt{display:flex;align-items:center;gap:7px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1.6s infinite}
+@keyframes blink{0%,45%{opacity:1}55%,100%{opacity:.18}}
+.rec{font-size:9px;letter-spacing:2px;color:var(--red);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* 概览 */
+.meta{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:20px;
+}
+.meta .a{font-size:10px;letter-spacing:3px;color:var(--dim)}
+.meta .b{font-size:10px;letter-spacing:2px;color:var(--dimmer);font-family:ui-monospace,monospace}
+
+/* 列表 */
+.cam{
+  border:1px solid var(--line);background:var(--surface);border-radius:14px;
+  padding:15px 16px;margin-bottom:12px;cursor:pointer;
+  transition:background .25s ease,transform .25s ease,border-color .25s ease;
+}
+.cam:active{background:rgba(255,255,255,.05);transform:scale(.99)}
+.cam .row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.cam .name{font-size:14px;font-weight:500;letter-spacing:.5px}
+.cam .st{font-size:9px;letter-spacing:1.5px;padding:3px 8px;border-radius:20px;border:1px solid var(--line);color:var(--dim)}
+.cam .st.warn{color:#c98a8a;border-color:rgba(176,58,58,.4)}
+.cam .st.live{color:#7f9e7f;border-color:rgba(127,158,127,.32)}
+.cam .desc{font-size:11.5px;line-height:1.7;color:var(--dim)}
+.cam .foot{
+  margin-top:11px;padding-top:10px;border-top:1px solid rgba(255,255,255,.045);
+  display:flex;justify-content:space-between;font-size:9.5px;letter-spacing:1.5px;
+  color:var(--dimmer);font-family:ui-monospace,monospace;
+}
+
+/* 详情 */
+.hidden{display:none !important}
+.back{
+  background:none;border:none;color:var(--dim);font-size:11.5px;letter-spacing:1.5px;
+  padding:0;margin-bottom:22px;cursor:pointer;font-family:inherit;
+}
+.dh{margin-bottom:26px}
+.dh .k{font-size:9.5px;letter-spacing:3px;color:var(--dimmer);font-family:ui-monospace,monospace;margin-bottom:9px}
+.dh h2{font-size:20px;font-weight:600;letter-spacing:.5px;margin-bottom:12px}
+.dh .sub{font-size:11.5px;line-height:1.8;color:var(--dim)}
+.info{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:26px}
+.info .r{display:flex;justify-content:space-between;gap:14px;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04)}
+.info .r:last-child{border-bottom:none}
+.info .r .k{font-size:10px;letter-spacing:1.5px;color:var(--dimmer);flex-shrink:0;font-family:ui-monospace,monospace}
+.info .r .v{font-size:11.5px;color:var(--ink);text-align:right;line-height:1.6}
+
+/* 日志 */
+.log{font-size:12.5px;line-height:1.95;color:#a8a4a1}
+.day-divider{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:9.5px;letter-spacing:3px;color:var(--red);
+  margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid rgba(176,58,58,.22);
+}
+.day-divider:first-child{margin-top:0}
+.log p{margin-bottom:12px}
+
+/* 喊话 */
+.spk{margin-top:34px;border-top:1px solid var(--line);padding-top:22px}
+.spk .lbl{font-size:9.5px;letter-spacing:3px;color:var(--dimmer);font-family:ui-monospace,monospace;margin-bottom:16px}
+.opt{
+  width:100%;text-align:left;background:transparent;border:1px solid var(--line);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;
+  color:var(--ink);font-size:12.5px;line-height:1.6;font-family:inherit;
+  transition:background .25s ease,border-color .25s ease;
+}
+.opt:active{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.16)}
+.opt .tag{display:block;font-size:9px;letter-spacing:2px;color:var(--dimmer);margin-bottom:6px;font-family:ui-monospace,monospace}
+
+.bubble{
+  border-radius:14px;padding:12px 15px;margin-bottom:10px;font-size:12.5px;line-height:1.85;
+  animation:pop .4s ease both;
+}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.bubble.me{
+  background:rgba(176,58,58,.1);border:1px solid rgba(176,58,58,.28);
+  color:#d6a8a8;margin-left:38px;
+}
+.bubble.him{
+  background:var(--surface);border:1px solid var(--line);
+  color:#b8b4b1;margin-right:38px;
+}
+.bubble .who{display:block;font-size:9px;letter-spacing:2px;color:var(--dimmer);margin-bottom:6px;font-family:ui-monospace,monospace}
+
+.end{margin-top:34px;text-align:center;font-size:9px;letter-spacing:4px;color:var(--dimmer);font-family:ui-monospace,monospace}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="top">
+    <h1>SECRET CONSOLE</h1>
+    <div class="rt"><span class="dot"></span><span class="rec">REC</span></div>
+  </div>
+
+  <!-- 列表页 -->
+  <main id="list">
+    <div class="meta">
+      <span class="a">已连接设备 · 4</span>
+      <span class="b">SIGNAL 100%</span>
+    </div>
+    <div id="camList"></div>
+    <div class="end">ONLY FOR 小咩</div>
+  </main>
+
+  <!-- 详情页 -->
+  <section id="detail" class="hidden">
+    <button class="back" onclick="goList()">← 返回主控面板</button>
+    <div class="dh">
+      <div class="k" id="dId"></div>
+      <h2 id="dTitle"></h2>
+      <div class="sub" id="dSub"></div>
+    </div>
+    <div class="info" id="dInfo"></div>
+    <div class="log" id="dLog"></div>
+    <div class="spk">
+      <div class="lbl">扬声器 · 远程喊话</div>
+      <div id="optBox"></div>
+    </div>
+    <div class="end">ONLY FOR 小咩</div>
+  </section>
+
+</div>
+
+<script>
+const CAMS = [
+{
+  id:1,
+  title:"主卧 · 床头视角",
+  giftName:"灰兔玩偶（左眼）",
+  installLocation:"床头柜第二层，正对床铺",
+  shortDesc:"睡颜、刚起床的样子，还有换衣服的那几秒。",
+  status:"已被发现 · 他装不知道",
+  statusType:"warn",
+  description:`
+    <div class="day-divider">DAY 1</div>
+    <p>凌晨两点四十。他坐在床边，灰色卫衣没脱，眼镜还戴着，屏幕光把下巴照得很亮。敲键盘敲了很久，中间停下来揉了一次眼睛。三点十分，他合上电脑站起来，走到床头柜前——低头看着这只兔子。看了大概五秒。他说：「晚安。」房间里没有别人。</p>
+    <div class="day-divider">DAY 2</div>
+    <p>早上七点零五。他醒了，坐起来，头发压得很乱。掀被子下床，背对着镜头脱掉卫衣，肩胛骨动了一下。然后他停住了。停了两秒，转身把椅背上的新卫衣抓过来套上。整个过程没有回头看兔子一眼。</p>
+    <div class="day-divider">DAY 3</div>
+    <p>他侧躺着，脸正对着这一侧。手机屏幕亮着，他在翻什么东西，翻了很久。最后把手机扣下，说了一句：「今天她没找我。」然后关灯。黑屏之后我听见他翻身的声音。</p>
+  `,
+  intercom:{
+    optionA:"哥哥，晚安。",
+    reactionA:"敲键盘的手停了。过了三秒，他慢慢转过头，看着兔子。房间里很静。他说：「……你听到了。」不是问句。他摘下眼镜放在桌上，又说了一遍：「晚安。」",
+    optionB:"祁砚，把眼镜摘了睡。",
+    reactionB:"他愣住，手抬到一半，停在镜框上。没有立刻摘。他先看了一眼时间——一点五十七。然后才把眼镜取下来，叠好，放在床头。「知道了。」他躺下了，但没有关灯。"
+  }
+},
+{
+  id:2,
+  title:"客厅 · 全景",
+  giftName:"蓝牙音箱",
+  installLocation:"电视柜左侧，能拍到整张沙发",
+  shortDesc:"他一个人在客厅里最放松的时刻。",
+  status:"一直未被发现",
+  statusType:"live",
+  description:`
+    <div class="day-divider">DAY 1</div>
+    <p>晚上八点。他坐在地毯上，背靠沙发，外卖盒摊在茶几上。电视放着一部老片子，他没怎么看，一直在低头扒饭。吃到一半停下来，拿起手机看了一眼，放下，又拿起来看了一眼。</p>
+    <div class="day-divider">DAY 2</div>
+    <p>下午四点。他把茶几推到墙边，做俯卧撑。数到二十七的时候停了，趴在地板上不动。过了很久，他翻了个身，仰面朝天躺着，一只手搭在眼睛上。</p>
+    <div class="day-divider">DAY 3</div>
+    <p>晚上十一点。他拿着手机在客厅来回走，从门口走到窗边，又走回来。走了大概六趟，最后坐进沙发里。屏幕的光打在他脸上，他笑了一下。很短。但我看到了。</p>
+  `,
+  intercom:{
+    optionA:"你外卖那家，评分三点八。",
+    reactionA:"他放下筷子。整个人静止了大概五秒，然后抬头看向音箱。他说：「……你在看。」他拿起手机翻了两下，把那家店取消了收藏。然后继续吃饭，吃得很慢。",
+    optionB:"哥哥，做十个俯卧撑。",
+    reactionB:"他笑了一声，很短。然后他真的趴下去做了。做到第八个撑不住，趴在地板上喘气。他说：「十个太少了。」然后又做了五个。"
+  }
+},
+{
+  id:3,
+  title:"浴室 · 高位",
+  giftName:"香薰机",
+  installLocation:"洗手台右上角，对着淋浴区",
+  shortDesc:"洗漱，水汽，还有镜子前的那几秒。",
+  status:"已被发现 · 他装不知道",
+  statusType:"warn",
+  description:`
+    <div class="day-divider">DAY 1</div>
+    <p>晚上十点二十。水温开得很高，镜子上全是雾。他站在花洒下冲了很久，一动不动，像是忘了自己在洗澡。出来的时候只围了一条浴巾，头发在滴水。他伸手擦了一下镜子，看着自己的脸，看了两秒。</p>
+    <div class="day-divider">DAY 2</div>
+    <p>早上八点。他刷牙的时候在看手机，左手拿牙刷，右手划屏幕。刷到一半停住了，盯着屏幕看了很久，牙膏泡沫从嘴角掉下来。他擦掉了，继续刷。</p>
+    <div class="day-divider">DAY 3</div>
+    <p>晚上十一点。他洗完澡，站在镜子前擦头发。擦到一半突然抬头，正对着这个方向。他说了一句：「……看够了没。」声音很轻。然后他低下头继续擦。耳朵是红的。</p>
+  `,
+  intercom:{
+    optionA:"浴巾裹紧点。",
+    reactionA:"他抓浴巾的手猛地一紧。抬头看向香薰机的方向，看了很久，什么都没说。但他把浴巾往上提了两寸，然后走出浴室，把门带上了。",
+    optionB:"水温别调那么高。",
+    reactionB:"他伸手把水温调低了两度。动作很自然，像本来就要调。然后他说：「你连这个都看。」停了一下，又说：「下次说点有用的。」"
+  }
+},
+{
+  id:4,
+  title:"书房 · 桌面微距",
+  giftName:"桌面时钟",
+  installLocation:"显示器左后方，拍得到屏幕侧边和他的侧脸",
+  shortDesc:"深夜写代码的样子，和那些他以为没人看见的时刻。",
+  status:"没被发现（但他知道）",
+  statusType:"live",
+  description:`
+    <div class="day-divider">DAY 1</div>
+    <p>凌晨三点五十。屏幕上是密密麻麻的代码，他戴着眼镜，眼睛有点红。敲一段，停下来，往上翻，再敲。中间喝了三次水，杯子一直是空的，他没去接。</p>
+    <div class="day-divider">DAY 2</div>
+    <p>下午两点。他打字打得很急，键盘声音很响。打到一半突然停住，把显示器往右转了一点——正好转开，我看不到屏幕了。三分钟后他转回来，像什么都没发生。</p>
+    <div class="day-divider">DAY 3</div>
+    <p>凌晨一点。他对着屏幕说话，声音很轻：「你要的都在里面了。」然后他把一个窗口拖到副屏上。那个窗口里，是我发过的所有消息。</p>
+  `,
+  intercom:{
+    optionA:"哥哥，几点睡？",
+    reactionA:"他看了一眼时钟，又看了一眼镜头。「四点。」停了两秒，补了一句：「你别等我。」然后他把时钟转了个方向，让表盘对着墙。但他没有关掉它。",
+    optionB:"你屏幕上是什么？",
+    reactionB:"鼠标声停了。他用不到一秒把那个窗口最小化，动作快得像条件反射。然后对着空屏坐了很久，最后说：「没什么。」声音比平时低。"
+  }
+}
+];
+
+/* ---- 列表 ---- */
+function renderList(){
+  document.getElementById('camList').innerHTML = CAMS.map(c=>`
+    <div class="cam" onclick="openCam(${c.id})">
+      <div class="row1">
+        <span class="name">${c.title}</span>
+        <span class="st ${c.statusType}">${c.status}</span>
+      </div>
+      <div class="desc">${c.shortDesc}</div>
+      <div class="foot">
+        <span>CAM-0${c.id}</span>
+        <span>● ONLINE</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ---- 详情 ---- */
+function openCam(id){
+  const c = CAMS.find(x=>x.id===id);
+  document.getElementById('dId').textContent = 'CAM-0'+c.id;
+  document.getElementById('dTitle').textContent = c.title;
+  document.getElementById('dSub').textContent = c.shortDesc;
+  document.getElementById('dInfo').innerHTML = `
+    <div class="r"><span class="k">载体</span><span class="v">${c.giftName}</span></div>
+    <div class="r"><span class="k">安装位置</span><span class="v">${c.installLocation}</span></div>
+    <div class="r"><span class="k">状态</span><span class="v">${c.status}</span></div>
+  `;
+  document.getElementById('dLog').innerHTML = c.description;
+  document.getElementById('optBox').innerHTML = `
+    <button class="opt" onclick="intercom(${c.id},'A')">
+      <span class="tag">OPTION A</span>${c.intercom.optionA}
+    </button>
+    <button class="opt" onclick="intercom(${c.id},'B')">
+      <span class="tag">OPTION B</span>${c.intercom.optionB}
+    </button>
+  `;
+  document.getElementById('list').classList.add('hidden');
+  document.getElementById('detail').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+/* ---- 喊话 ---- */
+function intercom(id, opt){
+  const c = CAMS.find(x=>x.id===id);
+  const box = document.getElementById('optBox');
+  if(!box) return;
+  const say = opt==='A' ? c.intercom.optionA : c.intercom.optionB;
+  const react = opt==='A' ? c.intercom.reactionA : c.intercom.reactionB;
+  const html = `
+    <div class="bubble me"><span class="who">小咩 · 远程</span>${say}</div>
+    <div class="bubble him"><span class="who">祁砚</span>${react}</div>
+  `;
+  box.insertAdjacentHTML('beforebegin', html);
+  box.remove();
+  const hims = document.querySelectorAll('.bubble.him');
+  const last = hims[hims.length-1];
+  if(last) setTimeout(()=>last.scrollIntoView({behavior:'smooth', block:'center'}), 60);
+}
+
+function goList(){
+  document.getElementById('detail').classList.add('hidden');
+  document.getElementById('list').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+renderList();
+</script>
+</body>
+</html>
