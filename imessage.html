@@ -1,0 +1,278 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>微信</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,"PingFang SC",sans-serif;background:#EDEDED;max-width:480px;margin:0 auto;min-height:100vh;color:#191919}
+.page{display:none}.page.on{display:block}
+.hd{background:#F7F7F7;border-bottom:1px solid #E2E2E2;padding:14px 16px;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.hd .r{font-size:19px;color:#666;font-weight:400}
+.row{display:flex;align-items:center;gap:12px;background:#fff;padding:12px 16px;border-bottom:1px solid #F0F0F0;cursor:pointer}
+.row:active{background:#F5F5F5}
+.av{width:46px;height:46px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:600;flex-shrink:0}
+.row .mid{flex:1;min-width:0}
+.row .nm{font-size:15.5px;margin-bottom:3px}
+.row .pv{font-size:13px;color:#9A9A9A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .rt{font-size:11px;color:#B5B5B5;align-self:flex-start;margin-top:3px;text-align:right}
+.badge{background:#FA5151;color:#fff;font-size:10px;border-radius:10px;padding:1px 6px;display:inline-block;margin-top:4px}
+.back{background:#F7F7F7;border-bottom:1px solid #E2E2E2;padding:13px 16px;font-size:15px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:20;cursor:pointer}
+.back .ar{font-size:20px;color:#555;line-height:1}
+.chat{background:#EDEDED;padding:14px 12px 30px;min-height:calc(100vh - 100px)}
+.msg{display:flex;gap:9px;margin-bottom:16px;align-items:flex-start}
+.msg.me{flex-direction:row-reverse}
+.msg .av{width:38px;height:38px;border-radius:6px;font-size:15px}
+.bub{max-width:70%;background:#fff;border-radius:5px;padding:9px 13px;font-size:14.5px;line-height:1.55;position:relative;word-break:break-word}
+.msg.me .bub{background:#95EC69}
+.sys{text-align:center;font-size:11px;color:#9A9A9A;margin:10px 0}
+.tf{background:#F5A623;color:#fff;border-radius:6px;padding:12px 14px;max-width:70%;font-size:13px}
+.tf .amt{font-size:19px;font-weight:600;margin-top:4px}
+.tf .nt{font-size:11px;opacity:.85;margin-top:6px}
+.img{border-radius:6px;background:#D8D8D8;padding:20px;font-size:11px;color:#666;max-width:70%;line-height:1.6}
+.mom{padding:0 0 30px}
+.cover{height:180px;background:linear-gradient(160deg,#2A2A2E,#141416);position:relative}
+.cover .me{position:absolute;right:14px;bottom:-24px;display:flex;align-items:flex-end;gap:10px}
+.cover .me .nm{color:#fff;font-size:15px;font-weight:600;padding-bottom:4px}
+.cover .me .av{width:56px;height:56px;border-radius:8px;border:2px solid #fff;font-size:20px}
+.mitem{background:#fff;padding:14px 16px;border-bottom:1px solid #F0F0F0;display:flex;gap:11px}
+.mitem .av{width:40px;height:40px;border-radius:6px;font-size:15px}
+.mitem .bd{flex:1;min-width:0}
+.mitem .nm{font-size:14px;color:#576B95;font-weight:500;margin-bottom:5px}
+.mitem .tx{font-size:14px;line-height:1.6;margin-bottom:8px;white-space:pre-wrap}
+.mitem .pic{border-radius:6px;background:#E4E4E4;padding:16px;font-size:11px;color:#666;line-height:1.6;margin-bottom:8px}
+.mitem .pic.big{padding:22px;text-align:center}
+.mitem .ft{font-size:12px;color:#9A9A9A;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.mitem .likes{background:#F7F7F7;border-radius:5px;padding:8px 10px;font-size:12.5px;color:#576B95;line-height:1.8}
+.mitem .likes b{color:#333;font-weight:500}
+.mitem .likes .cm{margin-top:5px;padding-top:5px;border-top:1px solid #EDEDED;color:#333}
+.mitem .likes .cm i{color:#576B95;font-style:normal}
+.me-card{background:#fff;margin-bottom:10px}
+.me-card .row{padding:15px 16px}
+.me-card .row .lb{font-size:15px;flex:1}
+.me-card .row .vl{font-size:14px;color:#9A9A9A}
+.me-top{background:#fff;padding:24px 16px;display:flex;gap:14px;align-items:center;margin-bottom:10px}
+.me-top .av{width:60px;height:60px;border-radius:8px;font-size:22px}
+.me-top .nm{font-size:19px;font-weight:600;margin-bottom:5px}
+.me-top .wx{font-size:13px;color:#9A9A9A}
+.flow{background:#fff;padding:14px 16px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center}
+.flow .l{font-size:14px}
+.flow .l small{display:block;font-size:11px;color:#B5B5B5;margin-top:3px}
+.flow .a{font-size:15px;font-weight:600}
+.flow .a.m{color:#333}
+.flow .a.p{color:#07C160}
+.ord{background:#fff;margin-bottom:10px;padding:14px 16px}
+.ord .t{font-size:14px;font-weight:600;margin-bottom:10px}
+.tl{padding-left:16px;position:relative}
+.tl::before{content:"";position:absolute;left:4px;top:6px;bottom:6px;width:1px;background:#E2E2E2}
+.tl div{position:relative;font-size:12.5px;color:#777;line-height:1.9;padding-left:10px}
+.tl div::before{content:"";position:absolute;left:-16px;top:9px;width:7px;height:7px;border-radius:50%;background:#07C160}
+.fav{background:#fff;padding:14px 16px;border-bottom:1px solid #F2F2F2;font-size:14px;cursor:pointer}
+.fav small{display:block;font-size:11.5px;color:#B5B5B5;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:24px;z-index:99}
+.modal.on{display:flex}
+.modal .bx{background:#fff;border-radius:12px;padding:20px;max-height:76vh;overflow-y:auto;font-size:13.5px;line-height:1.9;white-space:pre-wrap}
+.modal .bx h3{font-size:15px;margin-bottom:12px}
+.nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#F7F7F7;border-top:1px solid #E2E2E2;display:flex;z-index:30}
+.nav div{flex:1;text-align:center;padding:8px 0 12px;font-size:11px;color:#7A7A7A;cursor:pointer}
+.nav div.on{color:#07C160}
+.nav div i{display:block;font-size:20px;font-style:normal;margin-bottom:2px}
+.padbot{height:70px}
+</style></head><body>
+
+<div id="app"></div>
+<div class="modal" id="modal" onclick="closeModal(event)"><div class="bx" id="modalBx"></div></div>
+<div class="nav">
+  <div class="on" onclick="show('list')"><i>💬</i>微信</div>
+  <div onclick="show('mom')"><i>🖼️</i>朋友圈</div>
+  <div onclick="show('me')"><i>👤</i>我</div>
+</div>
+
+<script>
+var AV={kai:['#3A3A3E','砚'],xm:['#E8A0B4','咩'],ken:['#5B7FA6','K'],mom:['#A6745B','母'],qq:['#7A9A5B','晴'],jd:['#C9A227','陈'],kd:['#8A8A8E','快'],gz:['#6B6B8E','组'],aj:['#A65B7F','杰']};
+var CHATS=[
+{k:'xm',nm:'小咩',pin:1,un:0,t:'23:41',pv:'你不在我怎么睡',msgs:[
+ {m:0,t:'哥哥'},{m:0,t:'在吗'},{m:1,t:'在'},{m:0,t:'我睡不着'},{m:1,t:'又熬夜'},
+ {m:0,t:'你不也没睡'},{m:1,t:'我在写东西'},{m:0,t:'写什么'},{m:1,t:'你猜'},{m:0,t:'不猜'},
+ {m:1,t:'那就睡'},{m:0,t:'你先睡'},{m:1,t:'我看着你睡'},{m:0,t:'你不在我怎么睡'},
+ {m:1,t:'那我现在过去'},{m:0,t:'骗人'},{m:1,t:'我没骗过人'},{m:0,t:'你骗过'},
+ {m:1,t:'只骗过你一次'},{m:0,t:'哪次'},{m:1,t:'说我不喜欢你那次'},{m:0,t:'……'},
+ {m:0,t:'那现在呢'},{m:1,t:'现在？你自己看'},{m:1,t:'睡了。明天还要上学。'},{m:0,t:'晚安 哥哥'}
+]},
+{k:'ken',nm:'Ken（旧同学）',pin:0,un:2,t:'22:10',pv:'你条友真系变咗',msgs:[
+ {m:0,t:'喂 你几时返香港'},{m:1,t:'下个月'},{m:0,t:'带女朋友出嚟见下啦'},{m:1,t:'唔使'},
+ {m:0,t:'收埋收埋'},{m:1,t:'佢唔见人'},{m:0,t:'你以前唔系咁'},{m:1,t:'以前系以前'},
+ {m:0,t:'痴线'},{m:1,t:'嗯'},{m:0,t:'你条友真系变咗'},{m:1,t:'知'},
+ {m:0,t:'上次阿俊话你连酒都唔饮'},{m:1,t:'要开车'},{m:0,t:'你几时买车'},{m:1,t:'冇买'},
+ {m:0,t:'咁你车边个'},{m:1,t:'佢'},{m:0,t:'……'},{m:0,t:'我顶 你真系'},
+ {m:1,t:'嗯'},{m:0,t:'得啦 下个月返嚟请我食饭'},{m:1,t:'好'}
+]},
+{k:'mom',nm:'母上大人',pin:0,un:1,t:'20:02',pv:'记得食饭',msgs:[
+ {m:0,t:'仔 你几时返嚟食饭'},{m:1,t:'下个礼拜'},{m:0,t:'带埋女朋友'},{m:1,t:'佢要返学'},
+ {m:0,t:'你成日都咁讲'},{m:1,t:'真系'},{m:0,t:'我唔信'},{m:1,t:'你信唔信都系咁'},
+ {m:0,t:'你阿爸话想见下佢'},{m:1,t:'迟啲'},{m:0,t:'你次次都话迟啲'},{m:1,t:'妈'},
+ {m:0,t:'得啦 记得食饭'},{m:1,t:'知'},{m:0,t:'唔好又通宵'},{m:1,t:'尽量'},
+ {m:0,t:'咩尽量'},{m:1,t:'好。唔通宵。'},{m:0,t:'乖'},{m:1,t:'……'},
+ {m:0,t:'你细个都系咁 讲嘢咁少'},{m:1,t:'我忙'},{m:0,t:'忙都要食饭'}
+]},
+{k:'qq',nm:'表妹 阿晴',pin:0,un:0,t:'昨天',pv:'哥你女朋友是不是很漂亮',msgs:[
+ {m:0,t:'哥'},{m:0,t:'哥你女朋友是不是很漂亮'},{m:1,t:'关你咩事'},
+ {m:0,t:'好奇嘛'},{m:1,t:'一般'},{m:0,t:'一般你天天提'},{m:1,t:'我冇提'},
+ {m:0,t:'你朋友圈发过佢只手'},{m:1,t:'手唔算'},{m:0,t:'哇 你好离谱'},
+ {m:1,t:'唔好同阿妈讲'},{m:0,t:'请我食嘢'},{m:1,t:'好'},{m:0,t:'成交'},
+ {m:0,t:'几时带出嚟'},{m:1,t:'佢怕生'},{m:0,t:'你保护欲好重'},{m:1,t:'嗯'}
+]},
+{k:'jd',nm:'陈工',pin:0,un:0,t:'昨天',pv:'那个模型跑通了',msgs:[
+ {m:0,t:'小祁 那个模型跑通了'},{m:1,t:'嗯'},{m:0,t:'你这版优化了多少'},{m:1,t:'三成'},
+ {m:0,t:'可以啊 什么时候上线'},{m:1,t:'下周'},{m:0,t:'要不要我这边先测'},{m:1,t:'不用'},
+ {m:0,t:'你还是这么自信'},{m:1,t:'测过了'},{m:0,t:'行 那我等你'},{m:1,t:'嗯'},
+ {m:0,t:'对了 你最近怎么都不加班了'},{m:1,t:'有事'},{m:0,t:'什么事'},{m:1,t:'私事'},
+ {m:0,t:'哦 懂了'},{m:0,t:'恭喜'},{m:1,t:'……'},{m:1,t:'多谢'}
+]},
+{k:'gz',nm:'跨境项目组（47）',pin:0,un:12,t:'19:30',pv:'@祁砚 明天的会你来吗',msgs:[
+ {m:0,t:'@祁砚 明天的会你来吗'},{m:1,t:'来'},{m:0,t:'那需求文档今晚能出吗'},{m:1,t:'能'},
+ {m:0,t:'辛苦了'},{m:1,t:'嗯'},{m:0,t:'小祁每次都是最短回复'},{m:1,t:'……'},
+ {m:0,t:'哈哈哈哈'},{m:0,t:'对了昨天那个bug是谁修的'},{m:1,t:'我'},{m:0,t:'厉害'},
+ {m:0,t:'@全体成员 周五团建 报名的接龙'},{m:1,t:'不去'},{m:0,t:'为什么呀'},
+ {m:1,t:'有事'},{m:0,t:'你每次都有事'},{m:1,t:'嗯'},{m:0,t:'行吧'}
+]},
+{k:'aj',nm:'阿杰',pin:0,un:0,t:'昨天',pv:'哥 你那把键盘哪里买的',msgs:[
+ {m:0,t:'哥 你那把键盘哪里买的'},{m:1,t:'网上'},{m:0,t:'能不能发个链接'},{m:1,t:'不能'},
+ {m:0,t:'……'},{m:0,t:'为什么'},{m:1,t:'限量'},{m:0,t:'好吧'},
+ {m:0,t:'那你什么时候换键盘 旧的给我'},{m:1,t:'不换'},{m:0,t:'为什么'},
+ {m:1,t:'有人送的'},{m:0,t:'哦——'},{m:0,t:'懂了懂了'},{m:1,t:'闭嘴'},
+ {m:0,t:'哈哈哈哈'},{m:0,t:'行行行 不问了'}
+]},
+{k:'kd',nm:'快递小哥',pin:0,un:0,t:'周一',pv:'您的包裹已放门口',msgs:[
+ {m:0,t:'您的包裹已放门口，请注意查收'},{m:1,t:'好'},{m:0,t:'麻烦给个好评'},{m:1,t:'嗯'},
+ {m:0,t:'谢谢老板'},{m:1,t:'……'},{m:0,t:'今天又有一个大箱子'},{m:1,t:'嗯'},
+ {m:0,t:'最近买得挺多啊'},{m:1,t:'不是我的'},{m:0,t:'哦哦 送人的'},{m:1,t:'嗯'},
+ {m:0,t:'女朋友吧'},{m:1,t:'……'},{m:0,t:'哈哈哈我多嘴了'},{m:1,t:'没事'}
+]}
+];
+var MOM=[
+{av:'kai',nm:'祁砚',tx:'三点。',pic:'一张书桌的照片：台灯只开了一盏，键盘上还留着刚才敲到一半的代码，咖啡杯已经空了，杯壁上有一圈褐色的痕。窗外是香港的夜，远处有几栋楼的灯还亮着。',time:'今天 03:12',likes:['Ken','阿杰','表妹 阿晴'],cm:[['Ken','你又通宵'],['祁砚','习惯了']]},
+{av:'kai',nm:'祁砚',tx:'',pic:'一张兔子玩偶的照片：白色的，40cm，被摆在一张床的枕头旁边，摆得很正。没有配文。',time:'昨天 23:50',likes:['表妹 阿晴','小咩','Ken','阿杰','陈工'],cm:[['表妹 阿晴','？？哥你买这个'],['祁砚','不是我的'],['表妹 阿晴','那放你床上干嘛'],['祁砚','滚'],['Ken','笑死']]},
+{av:'kai',nm:'祁砚',tx:'今天没写代码。',pic:'手机屏幕的截图：微信对话框，输入框里打了三个字又删掉，只剩一个闪烁的光标。',time:'昨天 21:03',likes:['Ken','陈工'],cm:[['Ken','发给边个'],['祁砚','没发'],['Ken','孬'],['祁砚','嗯']]},
+{av:'ken',nm:'Ken',tx:'今日同旧同学食饭 佢话佢拍拖咗 但系唔肯带出嚟见人 你哋话系咩事',pic:'一张茶餐厅的照片：菠萝油、冻柠茶，桌面很挤，对面坐着一个只拍到肩膀的人。',time:'昨天 19:40',likes:['祁砚','阿杰'],cm:[['阿杰','怕被人抢走咯'],['祁砚','关你咩事'],['Ken','我讲嘅又唔系你'],['祁砚','……']]},
+{av:'kai',nm:'祁砚',tx:'香港的雨。',pic:'一张窗外的照片：玻璃上全是水痕，把远处的楼和天都糊成一片灰蓝，窗台上放着一把折叠伞。',time:'前天 17:22',likes:['母上大人','小咩'],cm:[['母上大人','记得带伞'],['祁砚','带了']]},
+{av:'mom',nm:'母上大人',tx:'今日煲咗汤 无人饮',pic:'一张厨房的照片：砂锅掀开盖子，冒着白汽，旁边放着两只空碗，一只都没动过。',time:'前天 18:05',likes:['祁砚','表妹 阿晴'],cm:[['表妹 阿晴','我饮我饮'],['母上大人','你唔系喺学校咩'],['表妹 阿晴','……']]},
+{av:'kai',nm:'祁砚',tx:'',pic:'一张键盘的照片：白色的静电容键盘，键帽是新换的，旁边放着一把一模一样的，还没拆封。',time:'3天前',likes:['阿杰','陈工','Ken'],cm:[['阿杰','哥你不是说限量吗'],['祁砚','嗯'],['阿杰','那你怎么有两把'],['祁砚','……'],['Ken','哈哈哈哈哈哈']]},
+{av:'qq',nm:'表妹 阿晴',tx:'我哥最近好奇怪 成日对住手机笑',pic:'一张偷拍的照片：一个男生坐在沙发上低头看手机，侧脸，嘴角确实是弯的。',time:'3天前',likes:['Ken','阿杰'],cm:[['Ken','有嘢'],['表妹 阿晴','我都觉得'],['祁砚','删了'],['表妹 阿晴','不要']]},
+{av:'kai',nm:'祁砚',tx:'有人问我为什么熬夜。\n我说习惯了。\n其实是有人睡了我才敢睡。',time:'4天前',likes:['Ken','陈工','阿杰','小咩'],cm:[['Ken','你咁肉麻'],['祁砚','删了'],['Ken','唔删 我要截图'],['祁砚','……']]},
+{av:'jd',nm:'陈工',tx:'招人。做量化，香港，远程也可以。要求：能熬，能扛，不爱说话。',pic:'一张办公室的照片：三台显示器并排，全是行情图，桌上有一箱没拆的泡面。',time:'4天前',likes:['祁砚'],cm:[['祁砚','不爱说话这条是为我写的吧'],['陈工','你要来？'],['祁砚','不来']]},
+{av:'kai',nm:'祁砚',tx:'换了。',pic:'一张咖啡的照片：手冲，浅烘，滤杯还在滴水，杯子上印着一行很小的英文字。',time:'5天前',likes:['Ken'],cm:[['Ken','你几时开始饮手冲'],['祁砚','有人送'],['Ken','哦']]},
+{av:'xm',nm:'小咩',tx:'今天路过一家店 看到一只兔子',pic:'一张橱窗的照片：玻璃后面摆着一排毛绒兔子，灯光打得很暖，玻璃上有拍照人的影子。',time:'5天前',likes:['祁砚'],cm:[['祁砚','哪家'],['小咩','不告诉你'],['祁砚','……'],['小咩','怕你买'],['祁砚','已经买了'],['小咩','啊？']]},
+{av:'kai',nm:'祁砚',tx:'',pic:'一张书桌抽屉的照片：抽屉里放着一盒没拆封的巧克力、一张拍立得的相纸、还有一张写着字的便签，字迹很小，看不清。',time:'6天前',likes:['表妹 阿晴'],cm:[['表妹 阿晴','哥你抽屉里是什么'],['祁砚','没什么'],['表妹 阿晴','分明有东西']]},
+{av:'aj',nm:'阿杰',tx:'今天开会 领导问小祁为什么最近下班这么准时\n小祁说：有事\n领导问什么事\n小祁说：私事\n全场安静了三秒',pic:'',time:'6天前',likes:['Ken','陈工','表妹 阿晴','祁砚'],cm:[['Ken','笑死'],['陈工','有进步'],['祁砚','阿杰'],['阿杰','我错了我错了']]},
+{av:'kai',nm:'祁砚',tx:'给她买了件卫衣。\n她说太大了。\n我说可以当睡衣。\n她穿了一晚上没脱。',pic:'一张卫衣的照片：灰色的，叠得很整齐，放在椅子上，袖口有一点点磨毛。',time:'1周前',likes:['小咩','Ken','表妹 阿晴'],cm:[['小咩','你怎么发出来了'],['祁砚','记录一下'],['小咩','删掉'],['祁砚','不删'],['Ken','哈哈哈哈哈']]}
+];
+var WALLET=[
+['给小咩转账','微信转账 · 备注「买点好吃的」','-520.00','m','09-26 21:04'],
+['静电容机械键盘 ×2','砚选 · 订单已签收','-2598.00','m','09-25 20:14'],
+['项目结算款','陈工 · 跨境量化模型','+18000.00','p','09-25 10:30'],
+['雪松香薰蜡烛','砚选 · 待收货','-228.00','m','09-24 19:02'],
+['打车 · 东涌','深夜，去接人','-186.00','m','09-24 01:40'],
+['咖啡豆 耶加雪菲','砚选','-168.00','m','09-23 15:20'],
+['房租 · 9月','东涌 · 月付','-12000.00','m','09-23 09:00'],
+['服务器续费','云端 GPU','-320.00','m','09-22 11:15'],
+['外卖 · 拉面','两人份','-72.00','m','09-21 23:50'],
+['兔子毛绒玩偶 60cm','砚选 · 已签收','-159.00','m','09-21 16:33']
+];
+var ORDERS=[
+{n:'静电容机械键盘 ×2',st:'运输中',tl:['09-25 20:14 商家已发货，广州仓','09-26 06:30 已到达深圳分拨中心','09-26 09:12 已到达香港中转仓','09-26 11:40 派件中']},
+{n:'雪松香薰蜡烛 · 无花果',st:'待发货',tl:['09-26 19:02 订单已支付，等待商家发货']},
+{n:'复古拍立得 + 相纸',st:'已完成',tl:['09-18 15:02 已签收','09-18 09:30 派件中','09-17 22:10 已到达香港中转仓']}
+];
+var FAVS=[
+['给小咩的一段话（没发出去）','凌晨三点写的，写了删，删了写，最后没发。\n\n「你今天说学校很累。我想说点什么，但是不知道说什么。我不太会安慰人。我只知道如果你在我旁边，我会把你按住让你睡一觉。别硬撑。你有我。」\n\n——后来我改成了一句「早点睡」。因为说太多她会觉得有压力。她这个人，你对她好一点她就要还回来。我不想她累。','09-25 03:12'],
+['小咩的课表截图','她发过来的时候还加了一句「你记这个干嘛」。我没回答。我把它存下来了。周二下午没课，周四晚上有实验。她周四晚上通常不回消息，因为实验室信号不好。','09-24 14:20'],
+['浏览器历史（我的）','「静电容键盘 声音小」「香港 深夜外卖 好吃」「小咩 生日礼物」「助眠香薰 推荐」「拍立得相纸 哪里买」「兔子玩偶 60cm」「失眠 怎么缓解」\n\n——搜索记录这种东西，比日记诚实。','09-23 02:41'],
+['《为什么你总是熬夜》','一篇公众号文章。讲的是熬夜的人往往不是不困，是不舍得结束这一天。\n因为白天的时间不属于自己。\n我看完想到了她。她也是这样。','09-22 23:30'],
+['和 Ken 的对话截图','Ken：「你条友真系变咗」\n我：「知」\n\n他没再说什么。他懂。','09-22 22:15'],
+['小咩的语音（17秒）','内容是：「哥哥我今天买到那个巧克力了 好好吃 下次给你带一个」。\n我听了大概二十遍。存下来了。','09-21 20:48'],
+['备忘：她的习惯','不吃香菜。喝奶茶要去冰三分糖。怕打雷。写作业喜欢开白噪音。左手写字，笔迹往右倒。睡觉会踢被子。生气的时候不说话，会一直看手机。\n\n——记这些有什么用。我也不知道。','09-20 01:20'],
+['一张照片（没发朋友圈）','拍的是她趴在桌上睡着的样子，脸压着书，头发散了。\n拍完我看了很久，最后没发，也没删。','09-19 16:40']
+];
+var cur='list',curChat='xm';
+function hd(t,r){return '<div class="hd"><span>'+t+'</span><span class="r">'+(r||'＋')+'</span></div>'}
+function av(k,sz){var a=AV[k];return '<div class="av" style="background:'+a[0]+(sz?';width:'+sz+'px;height:'+sz+'px':'')+'">'+a[1]+'</div>'}
+function show(v){
+  cur=v;var el=document.getElementById('app');var h='';
+  document.querySelectorAll('.nav div').forEach(function(d,i){d.className=(['list','mom','me'].indexOf(v)==i)?'on':''});
+  if(v=='list'){
+    h=hd('微信');
+    h+=CHATS.map(function(c){
+      return '<div class="row" onclick="openChat(\''+c.k+'\')">'+av(c.k)+'<div class="mid"><div class="nm">'+c.nm+(c.pin?' <span style="font-size:10px;color:#B5B5B5">置顶</span>':'')+'</div><div class="pv">'+c.pv+'</div></div><div class="rt">'+c.t+(c.un?'<div class="badge">'+c.un+'</div>':'')+'</div></div>';
+    }).join('');
+  }
+  if(v=='chat'){
+    var c=null;CHATS.forEach(function(x){if(x.k==curChat)c=x});
+    h='<div class="back" onclick="show(\'list\')"><span class="ar">‹</span>'+c.nm+'</div><div class="chat">';
+    h+=c.msgs.map(function(m){
+      if(m.type=='img')return '<div class="msg'+(m.m?' me':'')+'">'+av(m.m?'kai':c.k)+'<div class="img">'+m.t+'</div></div>';
+      if(m.type=='tf')return '<div class="msg'+(m.m?' me':'')+'">'+av(m.m?'kai':c.k)+'<div class="tf"><div>转账</div><div class="amt">¥'+m.t+'</div><div class="nt">'+(m.n||'')+'</div></div></div>';
+      return '<div class="msg'+(m.m?' me':'')+'">'+av(m.m?'kai':c.k)+'<div class="bub">'+m.t+'</div></div>';
+    }).join('')+'</div><div class="padbot"></div>';
+  }
+  if(v=='mom'){
+    h='<div class="mom"><div class="cover"><div class="me"><div class="nm">祁砚</div>'+av('kai')+'</div></div><div style="height:36px"></div>';
+    h+=MOM.map(function(m){
+      var x='<div class="mitem">'+av(m.av)+'<div class="bd"><div class="nm">'+m.nm+'</div>';
+      if(m.tx)x+='<div class="tx">'+m.tx+'</div>';
+      if(m.pic)x+='<div class="pic'+(m.pic.length<60?' big':'')+'">'+m.pic+'</div>';
+      x+='<div class="ft">'+m.time+' <span style="margin-left:auto">···</span></div>';
+      x+='<div class="likes">♥ '+m.likes.join('，');
+      m.cm.forEach(function(c){x+='<div class="cm"><i>'+c[0]+'</i>：'+c[1]+'</div>'});
+      x+='</div></div></div>';return x;
+    }).join('');
+    h+='</div><div class="padbot"></div>';
+  }
+  if(v=='me'){
+    h='<div class="me-top">'+av('kai')+'<div><div class="nm">祁砚</div><div class="wx">微信号：qiyan_kai</div></div></div>';
+    h+='<div class="me-card"><div class="row" onclick="show(\'wallet\')"><div class="lb">服务 / 钱包</div><div class="vl">›</div></div>';
+    h+='<div class="row" onclick="show(\'orders\')"><div class="lb">礼物订单</div><div class="vl">3 ›</div></div>';
+    h+='<div class="row" onclick="show(\'favs\')"><div class="lb">收藏</div><div class="vl">8 ›</div></div>';
+    h+='<div class="row" onclick="show(\'set\')"><div class="lb">设置</div><div class="vl">›</div></div></div>';
+    h+='<div class="padbot"></div>';
+  }
+  if(v=='wallet'){
+    h='<div class="back" onclick="show(\'me\')"><span class="ar">‹</span>钱包</div>';
+    h+='<div class="me-top" style="padding:20px 16px"><div><div style="font-size:12px;color:#9A9A9A">零钱</div><div style="font-size:26px;font-weight:600;margin-top:4px">¥ 18,432.60</div></div></div>';
+    h+=WALLET.map(function(w){
+      return '<div class="flow"><div class="l">'+w[0]+'<small>'+w[1]+'</small></div><div><div class="a '+(w[3]=='p'?'p':'m')+'">'+w[2]+'</div><small style="font-size:11px;color:#B5B5B5">'+w[4]+'</small></div></div>';
+    }).join('');
+    h+='<div class="padbot"></div>';
+  }
+  if(v=='orders'){
+    h='<div class="back" onclick="show(\'me\')"><span class="ar">‹</span>礼物订单</div>';
+    h+=ORDERS.map(function(o){
+      return '<div class="ord"><div class="t">'+o.n+' · <span style="color:#07C160;font-size:12px">'+o.st+'</span></div><div class="tl">'+o.tl.map(function(t){return '<div>'+t+'</div>'}).join('')+'</div></div>';
+    }).join('');
+    h+='<div class="padbot"></div>';
+  }
+  if(v=='favs'){
+    h='<div class="back" onclick="show(\'me\')"><span class="ar">‹</span>收藏</div>';
+    h+=FAVS.map(function(f,i){
+      return '<div class="fav" onclick="openFav('+i+')">'+f[0]+'<small>'+f[2]+' · '+f[1].replace(/\n/g,' ').slice(0,40)+'…</small></div>';
+    }).join('');
+    h+='<div class="padbot"></div>';
+  }
+  if(v=='set'){
+    h='<div class="back" onclick="show(\'me\')"><span class="ar">‹</span>设置</div>';
+    h+='<div class="me-card" style="padding:16px"><div style="font-size:14px;margin-bottom:10px">名字</div><input id="setNm" value="祁砚" style="width:100%;padding:11px;border:1px solid #E2E2E2;border-radius:8px;font-size:15px;outline:none"></div>';
+    h+='<div class="me-card" style="padding:16px"><div style="font-size:14px;margin-bottom:10px">头像</div><input type="file" id="setAv" accept="image/*" onchange="prevAv(this)" style="font-size:13px"></div>';
+    h+='<div class="me-card" style="padding:16px"><div style="font-size:14px;margin-bottom:10px">朋友圈封面</div><input type="file" id="setCv" accept="image/*" onchange="prevCv(this)" style="font-size:13px"></div>';
+    h+='<div class="me-card" style="padding:16px"><div style="font-size:14px;margin-bottom:10px">微信号</div><input value="qiyan_kai" style="width:100%;padding:11px;border:1px solid #E2E2E2;border-radius:8px;font-size:15px;outline:none"></div>';
+    h+='<div class="padbot"></div>';
+  }
+  el.innerHTML=h;window.scrollTo(0,0);
+}
+function openChat(k){curChat=k;CHATS.forEach(function(c){if(c.k==k)c.un=0});show('chat')}
+function openFav(i){
+  document.getElementById('modalBx').innerHTML='<h3>'+FAVS[i][0]+'</h3>'+FAVS[i][1]+'\n\n'+FAVS[i][2];
+  document.getElementById('modal').classList.add('on');
+}
+function closeModal(e){if(e.target.id=='modal')document.getElementById('modal').classList.remove('on')}
+function prevAv(el){if(el.files[0]){var u=URL.createObjectURL(el.files[0]);document.querySelectorAll('.av').forEach(function(a){if(a.textContent=='砚')a.style.backgroundImage='url('+u+')'})}}
+function prevCv(el){if(el.files[0]){var u=URL.createObjectURL(el.files[0]);var c=document.querySelector('.cover');if(c)c.style.backgroundImage='url('+u+')'}}
+show('list');
+</script></body></html>
