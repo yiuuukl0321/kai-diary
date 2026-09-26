@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>信息</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#000;color:#fff;font-family:-apple-system,"SF Pro Text","PingFang SC",sans-serif;max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+/* 提升暗黑模式质感的底层装饰 */
+.bg-ambient-texture{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%) rotate(-15deg);font-family:"Snell Roundhand",cursive;font-size:48px;color:rgba(255,255,255,0.015);pointer-events:none;user-select:none;white-space:nowrap;z-index:0}
+.wrap{position:relative;z-index:1}
+.hd{font-size:34px;font-weight:700;padding:16px 18px 8px;letter-spacing:.4px}
+.list{padding-bottom:40px}
+.it{height:76px;display:flex;align-items:center;gap:12px;padding:0 18px;border-bottom:.5px solid #38383a;cursor:pointer;position:relative}
+.it:last-child{border-bottom:none}
+.it:active{background:#1c1c1e}
+.iav{width:52px;height:52px;border-radius:50%;background:linear-gradient(180deg,#98989d 0%,#8e8e93 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.iav svg{width:30px;height:30px;fill:#fff}
+.ibd{flex:1;min-width:0}
+.inm{font-size:16px;font-weight:600;color:#fff;display:flex;align-items:center;gap:6px}
+.inm .t{margin-left:auto;font-size:13px;color:#5c5c5e;font-weight:400}
+.ipv{font-size:14px;color:#8e8e93;line-height:1.3;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.udot{width:10px;height:10px;border-radius:50%;background:#0a84ff;flex-shrink:0}
+.chat{position:fixed;inset:0;max-width:480px;margin:0 auto;background:#000;transform:translateX(100%);transition:transform .42s cubic-bezier(0.32,0.72,0,1);z-index:10;display:flex;flex-direction:column}
+.chat.on{transform:translateX(0)}
+.tbwrap{padding-top:env(safe-area-inset-top,12px);background:rgba(0,0,0,.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:.5px solid #2a2a2c;position:relative;z-index:5}
+.tb{height:44px;display:flex;align-items:center;justify-content:space-between}
+.tb .side{width:60px;display:flex;align-items:center;padding-left:12px;color:#0a84ff;font-size:22px;cursor:pointer}
+.tb .side.r{padding-left:0;justify-content:flex-end;padding-right:12px}
+.tb .mid{display:flex;align-items:center;gap:7px;flex:1;justify-content:center}
+.tb .mid .a{width:26px;height:26px;border-radius:50%;background:linear-gradient(180deg,#98989d,#8e8e93);display:flex;align-items:center;justify-content:center}
+.tb .mid .a svg{width:16px;height:16px;fill:#fff}
+.tb .mid .n{font-size:13px;font-weight:600}
+.body{flex:1;overflow-y:auto;padding:16px 14px 12px;display:flex;flex-direction:column}
+.mr{display:flex;margin-bottom:8px;position:relative;z-index:1}
+.mr.sent{justify-content:flex-end}
+.bub{max-width:74%;padding:9px 15px;border-radius:20px;font-size:16px;line-height:1.35;position:relative;z-index:1;word-break:break-word}
+.mr.received .bub{background:#262628;color:#fff;border-radius:20px}
+.mr.sent .bub{background:#0a84ff;color:#fff;border-radius:20px}
+.mr.tail.received .bub{border-bottom-left-radius:5px}
+.mr.tail.sent .bub{border-bottom-right-radius:5px}
+.mr.tail.received .bub::before,.mr.tail.received .bub::after{content:"";position:absolute;left:-7px;bottom:0;width:16px;height:18px;z-index:-1;background:#262628}
+.mr.tail.received .bub::before{border-bottom-right-radius:16px 14px}
+.mr.tail.received .bub::after{left:-16px;width:16px;height:18px;border-bottom-right-radius:14px;background:#000}
+.mr.tail.sent .bub::before,.mr.tail.sent .bub::after{content:"";position:absolute;right:-7px;bottom:0;width:16px;height:18px;z-index:-1;background:#0a84ff}
+.mr.tail.sent .bub::before{border-bottom-left-radius:16px 14px}
+.mr.tail.sent .bub::after{right:-16px;width:16px;height:18px;border-bottom-left-radius:14px;background:#000}
+.sent-tag{text-align:right;font-size:11px;color:#5c5c5e;margin:-4px 4px 12px 0}
+.inbar{padding:9px 12px calc(9px + env(safe-area-inset-bottom));background:rgba(20,20,22,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:.5px solid #2a2a2c;display:flex;align-items:center;gap:10px}
+.inbar .plus{width:32px;height:32px;border-radius:50%;background:#2c2c2e;display:flex;align-items:center;justify-content:center;color:#8e8e93;font-size:20px;flex-shrink:0}
+.inbar .fld{flex:1;height:34px;border-radius:17px;border:1px solid #3a3a3c;display:flex;align-items:center;padding:0 14px;font-size:15px;color:#5c5c5e}
+.inbar .mic{width:32px;height:32px;border-radius:50%;background:#2c2c2e;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.inbar .mic svg{width:16px;height:16px;stroke:#8e8e93;fill:none;stroke-width:1.8}
+</style></head><body>
+<div class="bg-ambient-texture">Originale Xuting</div>
+<div class="wrap">
+  <div class="hd">信息</div>
+  <div class="list" id="list"></div>
+</div>
+
+<div class="chat" id="chat">
+  <div class="tbwrap"><div class="tb">
+    <div class="side" onclick="closeChat()">‹</div>
+    <div class="mid"><div class="a"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z"/></svg></div><div class="n" id="cName"></div></div>
+    <div class="side r"></div>
+  </div></div>
+  <div class="body" id="cBody"></div>
+  <div class="inbar"><div class="plus">＋</div><div class="fld">iMessage</div><div class="mic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div></div>
+</div>
+
+<script>
+var AVA='<div class="iav"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z"/></svg></div>';
+var CON=[
+{n:"小咩",t:"23:41",pv:"你不在我怎么睡",un:1,msgs:[
+ [0,"哥哥"],[0,"你睡了吗"],[1,"没"],[0,"我睡不着"],[1,"我知道"],
+ [0,"你怎么知道"],[1,"你每次睡不着都找我"],[0,"……"],[0,"那你不也每次都回"],[1,"嗯"],
+ [0,"为什么"],[1,"因为我在等"],[0,"等什么"],[1,"等你找我"],[0,"你好肉麻"],
+ [1,"睡觉"],[0,"不要"],[1,"那我过去"],[0,"真的？"],[1,"真的"]]},
+{n:"Ken",t:"22:10",pv:"你开心就得",un:0,msgs:[
+ [0,"你几时返香港"],[1,"下个月"],[0,"带女朋友"],[1,"不带"],[0,"点解"],
+ [1,"佢怕生"],[0,"你以前唔系咁"],[1,"以前系以前"],[0,"痴线"],[1,"嗯"],
+ [0,"你条友"],[1,"讲完未"],[0,"未"],[1,"讲"],[0,"你开心就得"],[1,"知"]]},
+{n:"母上大人",t:"20:02",pv:"乖",un:0,msgs:[
+ [0,"仔"],[0,"食饭未"],[1,"食咗"],[0,"食咩"],[1,"面"],
+ [0,"又食面"],[1,"方便"],[0,"你咁样唔得"],[1,"得"],[0,"下次返嚟我煲汤"],
+ [1,"好"],[0,"带埋女朋友"],[1,"……"],[0,"唔好又话迟啲"],[1,"妈"],
+ [0,"得啦得啦"],[1,"我尽量"],[0,"乖"]]},
+{n:"顺丰快递",t:"19:30",pv:"好的老板",un:0,msgs:[
+ [0,"【顺丰】您的快件已放置于门口，签收码 8842，请及时取件。"],[1,"好"],[0,"麻烦五星好评"],[1,"嗯"],
+ [0,"老板 这个月你收了 17 个包裹"],[1,"嗯"],[0,"都是送人的吧"],[1,"关你事？"],
+ [0,"哈哈哈 不是不是"],[1,"快递放好"],[0,"好的老板"]]},
+{n:"+852 6xxx xxxx",t:"17:12",pv:"好的，祝您生活愉快",un:0,msgs:[
+ [0,"【香港邮政】您的包裹因地址不详被退回，请点击 hk-post.xx 处理。"],[1,"我没有包裹"],[0,"系统显示您有一个国际包裹"],[1,"那你退回吧"],
+ [0,"需要您支付 28 港币运费"],[1,"那不要了"],[0,"先生，包裹里是贵重物品"],[1,"那更不要了"],
+ [0,"……"],[0,"您确定吗"],[1,"确定"],[0,"好的，祝您生活愉快"],[1,"嗯"]]},
+{n:"阿杰",t:"昨天",pv:"我错了我错了",un:0,msgs:[
+ [0,"哥"],[0,"明天开会你来吗"],[1,"来"],[0,"领导说想让你讲一下架构"],[1,"不讲"],
+ [0,"为什么"],[1,"麻烦"],[0,"那我怎么回"],[1,"你说我忙"],[0,"你确实忙"],
+ [0,"忙什么"],[1,"不关你事"],[0,"懂了懂了"],[0,"又去找小咩是吧"],[1,"阿杰"],
+ [0,"我错了我错了"]]}
+];
+function render(){
+  document.getElementById('list').innerHTML=CON.map(function(c,i){
+    return '<div class="it" onclick="openChat('+i+')">'+AVA+'<div class="ibd"><div class="inm">'+c.n+'<span class="t">'+c.t+'</span></div><div class="ipv">'+c.pv+'</div></div>'+(c.un?'<div class="udot"></div>':'')+'</div>';
+  }).join('');
+}
+function openChat(i){
+  var c=CON[i];c.un=0;
+  document.getElementById('cName').textContent=c.n;
+  var h='';
+  c.msgs.forEach(function(m,k){
+    var next=c.msgs[k+1];
+    var sameNext=next&&next[0]==m[0];
+    var cls='mr '+(m[0]?'sent':'received')+(sameNext?'':' tail');
+    h+='<div class="'+cls+'"><div class="bub">'+m[1]+'</div></div>';
+  });
+  h+='<div class="sent-tag">已送达</div>';
+  document.getElementById('cBody').innerHTML=h;
+  document.getElementById('chat').classList.add('on');
+  setTimeout(function(){document.getElementById('cBody').scrollTop=99999},60);
+  render();
+}
+function closeChat(){document.getElementById('chat').classList.remove('on')}
+render();
+</script></body></html>
