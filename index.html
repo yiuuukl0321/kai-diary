@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#eceae5">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-title" content="咩&amp;砚">
+<title>咩&amp;砚</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f4f4f2;--card:#fff;--ink:#0b0b0b;--mute:#a0a09c;--line:rgba(0,0,0,.09)}
+html{height:100vh;min-height:100lvh;background-color:#eceae5}
+body{height:100%;overflow:hidden;background:transparent;color:var(--ink);touch-action:manipulation;
+font:400 15px/1.55 -apple-system,"PingFang SC",system-ui,sans-serif;
+-webkit-font-smoothing:antialiased;-webkit-user-select:none;user-select:none}
+/* ---------- 锁屏 ---------- */
+#lock{position:fixed;inset:0;background:#eceae5;z-index:40;display:flex;flex-direction:column;
+align-items:center;justify-content:space-between;text-align:center;
+padding:calc(env(safe-area-inset-top) + 46px) 24px calc(env(safe-area-inset-bottom) + 34px);
+transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s}
+#lock.hide{transform:translateY(-100%);opacity:0;pointer-events:none}
+#lkDate{position:absolute;left:24px;right:24px;top:calc(env(safe-area-inset-top) + 46px);
+font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(0,0,0,.4)}
+#lkTime{position:absolute;left:24px;right:24px;top:calc(50% - 86px);
+font-size:74px;font-weight:200;letter-spacing:-3.5px;line-height:1;color:#0b0b0b}
+#lkDays{position:absolute;left:24px;right:24px;top:calc(50% - 4px);
+font-size:12px;letter-spacing:.14em;color:rgba(0,0,0,.45);text-transform:uppercase}
+#lkDays b{display:block;font-size:34px;font-weight:300;letter-spacing:-1px;color:#0b0b0b;margin-bottom:6px}
+.up{position:absolute;left:24px;right:24px;bottom:calc(env(safe-area-inset-bottom) + 34px);
+font-size:10px;letter-spacing:.2em;color:rgba(0,0,0,.32)}
+/* ---------- 桌面 ---------- */
+#home{position:fixed;inset:0;display:flex;flex-direction:column;background:transparent}
+.pages{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+padding:calc(env(safe-area-inset-top) + 26px) 14px 6px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px 10px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;
+-webkit-user-select:none;user-select:none}
+.ico{width:62px;height:62px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+font-size:29px;background-color:#fff;border:1px solid rgba(0,0,0,.07);
+box-shadow:0 2px 10px rgba(0,0,0,.07);transition:transform .12s;overflow:hidden;position:relative}
+.ico::after{content:"";position:absolute;inset:0;border-radius:inherit;
+background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 58%);pointer-events:none}
+.nm{font-size:11.5px;color:#1c1c1c;max-width:72px;text-align:center;
+overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile:active .ico{transform:scale(.9)}
+body.edit .tile{animation:jig .5s infinite alternate ease-in-out}
+body.edit .tile:nth-child(2n){animation-delay:.09s}
+body.edit .tile:nth-child(3n){animation-delay:.18s}
+body.edit .tile:nth-child(4n){animation-delay:.27s}
+body.dragging .tile{animation:none!important}
+@keyframes jig{from{transform:rotate(-.7deg)}to{transform:rotate(.7deg)}}
+.del{position:absolute;top:-5px;left:-4px;width:23px;height:23px;border-radius:50%;
+background:#fff;color:#111;font-size:17px;line-height:21px;text-align:center;
+box-shadow:0 1px 5px rgba(0,0,0,.28);z-index:3;display:none}
+body.edit .del{display:block}
+.tile.ghost{opacity:.22}
+.ghostf{position:fixed;z-index:99;pointer-events:none;margin:0;will-change:transform}
+.ghostf .ico{transform:scale(1.16);box-shadow:0 12px 22px rgba(0,0,0,.22)}
+#doneBtn{position:fixed;top:calc(env(safe-area-inset-top) + 8px);right:16px;z-index:35;
+background:#111;color:#fff;border:0;border-radius:18px;padding:7px 18px;font-size:13px;display:none}
+body.edit #doneBtn{display:block}
+.rmtitle{font-size:11px;letter-spacing:.16em;color:#8a8a86;text-transform:uppercase;
+margin:28px 0 14px;padding-left:2px}
+.dock{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+margin:0 14px calc(env(safe-area-inset-bottom) + 16px);padding:13px 12px;
+background:rgba(255,255,255,.66);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+border:1px solid rgba(0,0,0,.06);border-radius:28px;min-height:88px}
+.dock .ico{box-shadow:none;border:0;width:56px;height:56px}
+.dock .nm{display:none}
+/* ---------- 全屏 app ---------- */
+#ov{position:fixed;inset:0;background:#fff;z-index:50;display:flex;flex-direction:column;
+transition:transform .34s cubic-bezier(.32,.72,0,1)}
+#ov.hide{transform:translateX(100%)}
+.ovtop{padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;display:flex;align-items:center;gap:8px;
+border-bottom:1px solid var(--line);flex:0 0 auto;background:#fff}
+.back{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;cursor:pointer}
+.back:active{background:rgba(0,0,0,.06)}
+.ovtop b{font-size:15px;font-weight:600;letter-spacing:.3px}
+#ovFrame{flex:1;width:100%;border:0;background:#fff}
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <div id="lkDate"></div>
+  <div>
+    <div id="lkTime">--:--</div>
+    <div id="lkDays"></div>
+  </div>
+  <div class="up">上滑解锁</div>
+</div>
+
+<div id="home">
+  <div class="pages">
+    <div class="grid" id="grid"></div>
+    <div id="removedBox"></div>
+  </div>
+  <div class="dock" id="dock"></div>
+</div>
+<button id="doneBtn" onclick="exitEdit()">完成</button>
+
+<div id="ov" class="hide">
+  <div class="ovtop">
+    <div class="back" onclick="closeApp()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0b0b0b"
+        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    </div>
+    <b id="ovTitle"></b>
+  </div>
+  <iframe id="ovFrame" title="app"></iframe>
+</div>
+
+<script>
+/* ================= 应用清单 =================
+   全部放在仓库根目录（跟 index.html 同级），u 就是文件名。 */
+var APPS = [
+  { k:'diary',    n:'一日',  e:'🕐', c:'#F6F4F2', u:'diary.html' },
+  { k:'bunny',    n:'养宠',  e:'🐰', c:'#FDF2F4', u:'bunny.html' },
+  { k:'shop',     n:'商城',  e:'🛍️', c:'#FDF1EE', u:'shop.html' },
+  { k:'cams',     n:'监控',  e:'📹', c:'#24242C', u:'cams.html' },
+  { k:'wechat',   n:'微信',  e:'💬', c:'#E7F5E9', u:'wechat.html' },
+  { k:'imessage', n:'信息',  e:'💌', c:'#E9E9EF', u:'imessage.html' },
+  { k:'love',     n:'日记',  e:'📖', c:'#FDF0F3', u:'love.html' },
+  { k:'douyin',   n:'抖音',  e:'🎵', c:'#1A1A1A', u:'douyin.html' },
+  { k:'assets',   n:'资产',  e:'📊', c:'#141414', u:'assets.html' }
+];
+var DOCK = ['wechat','imessage','love','douyin'];
+var ANNIV = localStorage.getItem('xapp_anniv') || '2026-09-12';
+
+var ORDER = JSON.parse(localStorage.getItem('xapp_order') || 'null') || APPS.map(function(a){return a.k});
+var HIDDEN = JSON.parse(localStorage.getItem('xapp_hidden') || '[]');
+var saveOrder = function(){ localStorage.setItem('xapp_order', JSON.stringify(ORDER)); };
+var saveHidden = function(){ localStorage.setItem('xapp_hidden', JSON.stringify(HIDDEN)); };
+
+var $ = function(id){ return document.getElementById(id); };
+var p2 = function(n){ return String(n).padStart(2,'0'); };
+var find = function(k){ for (var i=0;i<APPS.length;i++) if (APPS[i].k===k) return APPS[i]; return null; };
+
+/* ---------- 锁屏 ---------- */
+function days(){
+  var a = new Date(ANNIV), b = new Date(new Date().toDateString());
+  return Math.floor((b - a) / 864e5) + 1;
+}
+function tick(){
+  var d = new Date();
+  $('lkDate').textContent = (d.getMonth()+1)+'.'+p2(d.getDate())+' 星期'+'日一二三四五六'[d.getDay()];
+  $('lkTime').textContent = p2(d.getHours())+':'+p2(d.getMinutes());
+  $('lkDays').innerHTML = '<b>'+days()+'</b>days with you';
+}
+tick(); setInterval(tick, 15000);
+var ly = 0;
+$('lock').addEventListener('touchstart', function(e){ ly = e.touches[0].clientY; }, {passive:true});
+$('lock').addEventListener('touchend', function(e){
+  if (ly - e.changedTouches[0].clientY > 40) $('lock').classList.add('hide');
+});
+$('lock').addEventListener('click', function(){ $('lock').classList.add('hide'); });
+
+/* ---------- 渲染 ---------- */
+function tileHTML(a, del){
+  return '<div class="tile" data-k="'+a.k+'">'+
+    (del ? '<div class="del" data-del="'+a.k+'">−</div>' : '')+
+    '<div class="ico" style="background:'+a.c+'">'+a.e+'</div>'+
+    '<div class="nm">'+a.n+'</div>'+
+  '</div>';
+}
+function render(){
+  var list = ORDER.filter(function(k){ return HIDDEN.indexOf(k) < 0; });
+  $('grid').innerHTML = list.map(function(k){ return tileHTML(find(k), true); }).join('');
+  $('dock').innerHTML = DOCK.map(function(k){
+    var a = find(k); if (!a || HIDDEN.indexOf(k) >= 0) return '';
+    return '<div class="tile" data-k="'+a.k+'"><div class="ico" style="background:'+a.c+'">'+a.e+'</div><div class="nm">'+a.n+'</div></div>';
+  }).join('');
+  if (HIDDEN.length){
+    $('removedBox').innerHTML = '<div class="rmtitle">已移除 · 点一下放回去</div>'+
+      '<div class="grid">'+HIDDEN.map(function(k){ return tileHTML(find(k), false); }).join('')+'</div>';
+  } else { $('removedBox').innerHTML=''; }
+  bind();
+}
+
+/* ---------- 点击 / 长按 / 拖动 ---------- */
+var editing = false, holdTimer = null, ghostEl = null, curEl = null;
+
+function bind(){
+  var tiles = document.querySelectorAll('.tile');
+  for (var i=0;i<tiles.length;i++) bindTile(tiles[i]);
+}
+function bindTile(el){
+  var key = el.getAttribute('data-k');
+  el.addEventListener('pointerdown', function(e){
+    var delKey = e.target.getAttribute && e.target.getAttribute('data-del');
+    if (delKey){
+      e.preventDefault(); e.stopPropagation();
+      HIDDEN.push(delKey); saveHidden(); render(); return;
+    }
+    if (editing){ startDrag(e, el, key); return; }
+    el._sx = e.clientX; el._sy = e.clientY; el._moved = false;
+    holdTimer = setTimeout(function(){ enterEdit(); }, 480);
+  });
+  el.addEventListener('pointermove', function(e){
+    if (el._sx != null && (Math.abs(e.clientX-el._sx) > 8 || Math.abs(e.clientY-el._sy) > 8)){
+      el._moved = true; clearTimeout(holdTimer);
+    }
+  });
+  el.addEventListener('pointerup', function(){
+    clearTimeout(holdTimer);
+    if (!editing && !el._moved) openApp(key);
+    el._sx = null;
+  });
+  el.addEventListener('pointercancel', function(){ clearTimeout(holdTimer); });
+}
+function enterEdit(){ editing = true; document.body.classList.add('edit'); }
+function exitEdit(){
+  editing = false;
+  document.body.classList.remove('edit');
+  document.body.classList.remove('dragging');
+  saveOrder(); render();
+}
+function startDrag(e, el, key){
+  e.preventDefault();
+  curEl = el;
+  var r = el.getBoundingClientRect();
+  ghostEl = el.cloneNode(true);
+  ghostEl.className = 'tile ghostf';
+  ghostEl.style.width = r.width + 'px';
+  ghostEl.style.left = r.left + 'px';
+  ghostEl.style.top = r.top + 'px';
+  document.body.appendChild(ghostEl);
+  el.classList.add('ghost');
+  document.body.classList.add('dragging');
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp);
+}
+function onMove(e){
+  if (!ghostEl) return;
+  var dx = e.clientX - (parseFloat(ghostEl.style.left) + ghostEl.offsetWidth/2);
+  var dy = e.clientY - (parseFloat(ghostEl.style.top) + ghostEl.offsetHeight/2);
+  ghostEl.style.transform = 'translate('+dx+'px,'+dy+'px)';
+  var under = document.elementFromPoint(e.clientX, e.clientY);
+  if (!under) return;
+  var t = under.closest ? under.closest('.tile') : null;
+  if (!t || t === curEl || t.classList.contains('ghostf')) return;
+  var a = t.getAttribute('data-k'), b = curEl.getAttribute('data-k');
+  if (!a || !b) return;
+  var ia = ORDER.indexOf(a), ib = ORDER.indexOf(b);
+  if (ia < 0 || ib < 0) return;
+  ORDER[ia] = b; ORDER[ib] = a;
+  saveOrder(); render();
+  var nk = document.querySelector('.tile[data-k="'+b+'"]');
+  if (nk){ curEl = nk; curEl.classList.add('ghost'); }
+}
+function onUp(){
+  document.removeEventListener('pointermove', onMove);
+  document.removeEventListener('pointerup', onUp);
+  if (ghostEl){ ghostEl.remove(); ghostEl = null; }
+  document.body.classList.remove('dragging');
+  saveOrder(); render();
+}
+
+/* ---------- 打开 app ---------- */
+function openApp(k){
+  var a = find(k); if (!a) return;
+  $('ovTitle').textContent = a.n;
+  $('ovFrame').src = a.u;
+  $('ov').classList.remove('hide');
+}
+function closeApp(){
+  $('ov').classList.add('hide');
+  setTimeout(function(){ $('ovFrame').src = 'about:blank'; }, 380);
+}
+history.pushState(null,'',location.href);
+window.addEventListener('popstate', function(){
+  if (!$('ov').classList.contains('hide')){ closeApp(); history.pushState(null,'',location.href); }
+});
+
+render();
+</script>
+</body>
+</html>
